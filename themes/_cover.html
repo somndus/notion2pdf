@@ -1,0 +1,17 @@
+<!-- Couverture par défaut. Un thème peut fournir son propre cover.html.
+     Variables : {{title}} {{subtitle}} {{description}} {{version}} {{author}} {{date}} {{year}}
+                 {{coverImage}} (cover de la page racine Notion) {{coverBackdrop}} (image du thème, via theme.json)
+     Blocs conditionnels : {{#if version}} … {{/if}} -->
+<div class="cover">
+  {{#if coverImage}}<div class="cover-image"><img src="{{coverImage}}" alt=""></div>{{/if}}
+  <div class="cover-text">
+    <h1 class="cover-title">{{title}}</h1>
+    {{#if subtitle}}<p class="cover-subtitle">{{subtitle}}</p>{{/if}}
+    {{#if description}}<p class="cover-description">{{description}}</p>{{/if}}
+    <div class="cover-meta">
+      {{#if version}}<span class="cover-version">{{version}}</span>{{/if}}
+      <span class="cover-date">{{date}}</span>
+      {{#if author}}<span class="cover-author">{{author}}</span>{{/if}}
+    </div>
+  </div>
+</div>

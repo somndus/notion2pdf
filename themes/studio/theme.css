@@ -1,0 +1,44 @@
+/* studio — sobre, blanc, cobalt. Toute la structure vient de _base.css ; ici : tokens + touches. */
+:root {
+  --paper: #ffffff;
+  --ink: #1b1d22;
+  --ink-soft: #454a54;
+  --muted: #8a8f99;
+  --accent: #2e5aac;
+  --rule: #e3e6ec;
+  --surface: #f4f6f9;
+  --code-bg: #f1f3f7;
+  --font-body: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --fs-body: 10.5pt;
+  --fs-h1: 28pt;
+  --fs-h2: 16pt;
+  --fs-h3: 12.5pt;
+  --radius: 5px;
+  --img-radius: 5px;
+}
+
+/* titre de section : filet cobalt court sous le titre */
+.page-header { padding-bottom: 0.9em; border-bottom: 1px solid var(--rule); }
+.page-title { letter-spacing: -0.02em; }
+.page-title::after { content: ""; display: block; width: 2.2em; height: 3px; background: var(--accent); margin-top: 0.45em; border-radius: 2px; }
+
+h2 { color: var(--ink); }
+h3 { color: var(--accent); }
+
+blockquote { background: var(--surface); border-radius: var(--radius); padding: 0.75em 1em; border-left: 3px solid var(--accent); }
+table.simple-table th { background: var(--surface); color: var(--ink); }
+table.simple-table tr:nth-child(even) td { background: #fafbfc; }
+
+/* couverture : image plein cadre en haut, bloc titre blanc en bas */
+.cover { display: flex; flex-direction: column; }
+.cover-image { flex: 0 0 58%; overflow: hidden; background: var(--surface); }
+.cover-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-text { flex: 1 1 auto; padding: 16mm 18mm 18mm; display: flex; flex-direction: column; }
+.cover-text::before { content: ""; display: block; width: 14mm; height: 4px; background: var(--accent); margin-bottom: 8mm; }
+.cover-title { font-family: var(--font-display); font-size: 36pt; font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; margin: 0; }
+.cover-subtitle { font-size: 14pt; color: var(--ink-soft); margin: 0.5em 0 0; }
+.cover-description { font-size: 11pt; color: var(--ink-soft); margin: 1em 0 0; max-width: 34em; }
+.cover-meta { margin-top: auto; display: flex; gap: 2.5em; color: var(--muted); font-size: 9.5pt; }
+.cover-version { color: var(--accent); font-weight: 600; }
+.cover:not(:has(.cover-image)) .cover-text { padding-top: 60mm; }

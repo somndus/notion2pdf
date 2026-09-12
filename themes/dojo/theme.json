@@ -1,0 +1,11 @@
+{
+  "description": "Papier de riz, vermillon et encre : la DA sumo / arcade. Titres en capitales, numéros de page dans un cercle.",
+  "tocTitle": "Sommaire",
+  "pageBackground": "#f7f1e6",
+  "mermaidTheme": "neutral",
+  "pdf": {
+    "format": "A4",
+    "margin": { "top": "20mm", "right": "17mm", "bottom": "22mm", "left": "17mm" },
+    "footerTemplate": "<div style=\"-webkit-print-color-adjust:exact;width:100%;font-family:Bahnschrift,'Franklin Gothic Medium','Arial Narrow',Arial,sans-serif;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#8a8078;padding:0 17mm;display:flex;justify-content:space-between;align-items:center\"><span>{{title}}</span><span class=\"pageNumber\" style=\"-webkit-print-color-adjust:exact;display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;background:#c1272d;color:#f7f1e6;font-weight:700;letter-spacing:0\"></span></div>"
+  }
+}

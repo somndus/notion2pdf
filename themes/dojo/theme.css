@@ -1,0 +1,68 @@
+/* dojo — papier de riz, vermillon, encre. Display condensé en capitales, corps en serif. */
+:root {
+  --paper: #f7f1e6;
+  --ink: #17130f;
+  --ink-soft: #3f3630;
+  --muted: #8a8078;
+  --accent: #c1272d;          /* vermillon */
+  --accent-ink: #f7f1e6;
+  --gold: #c99a2e;            /* le Golden Mawashi */
+  --rule: #e2d7c5;
+  --surface: #efe6d6;
+  --code-bg: #ece2d0;
+  --font-body: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-display: Bahnschrift, "Franklin Gothic Medium", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --fs-body: 10.5pt;
+  --lh-body: 1.6;
+  --fs-h1: 30pt;
+  --fs-h2: 15pt;
+  --fs-h3: 12pt;
+  --radius: 2px;
+  --img-radius: 2px;
+  /* fonds Notion réchauffés pour rester dans la palette */
+  --bg-gray: #ebe3d4; --bg-orange: #f6dfc4; --bg-yellow: #f4e6bb; --bg-blue: #dfe6e0;
+  --bg-green: #e1e8d3; --bg-red: #f4d6cf; --bg-purple: #e9dfe0; --bg-pink: #f1dcd7; --bg-brown: #eadfd2;
+}
+
+/* titres : display condensé en capitales */
+.page-title, h2, h3, h4, .toc-heading, .cover-title {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 700;
+}
+.page-header { padding: 0 0 0.6em; border-bottom: 3px solid var(--ink); }
+.page-title { line-height: 1; }
+.page-header::before { content: ""; display: block; width: 9mm; height: 9mm; border-radius: 50%; background: var(--accent); margin-bottom: 4mm; }
+h2 { color: var(--accent); margin-top: 1.8em; }
+h3 { color: var(--ink); }
+h3::before { content: ""; display: inline-block; width: 0.55em; height: 0.55em; border-radius: 50%; border: 2px solid var(--accent); margin-right: 0.45em; vertical-align: 0.05em; }
+a { color: var(--accent); }
+
+blockquote { border-left: 4px solid var(--accent); font-style: italic; }
+blockquote[class*="_background"] { border-left: 4px solid var(--accent); }
+aside.callout { border-left: 3px solid var(--gold); border-radius: 0; }
+table.simple-table th { background: var(--ink); color: var(--paper); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85em; border-color: var(--ink); }
+table.simple-table th strong { font-weight: 700; }
+table.simple-table td { border-color: var(--rule); }
+.checkbox { border-radius: 50%; border-color: var(--ink); }
+.checkbox-on { background: var(--accent); border-color: var(--accent); }
+p.link-to-page::before { color: var(--accent); }
+figure.image img { border: 1px solid var(--rule); }
+.section-cover { border-radius: 0; }
+
+/* sommaire */
+.toc-heading::before { content: ""; display: block; width: 9mm; height: 9mm; border-radius: 50%; background: var(--accent); margin-bottom: 4mm; }
+.toc-page > a { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; }
+.toc-list .toc-num { color: var(--accent); font-family: var(--font-display); font-weight: 700; }
+.toc-h a { font-family: var(--font-body); }
+
+/* couverture : image plein cadre, bandeau vermillon, titre géant */
+.cover { display: flex; flex-direction: column; background: var(--paper); }
+.cover-image { flex: 0 0 60%; overflow: hidden; border-bottom: 7mm solid var(--accent); background: var(--ink); }
+.cover-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-text { flex: 1 1 auto; padding: 12mm 16mm 16mm; display: flex; flex-direction: column; position: relative; }
+.cover-title { font-size: 46pt; line-height: 0.95; letter-spacing: 0.01em; margin: 0; max-width: 8em; }
+.cover-subtitle { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-size: 11pt; margin: 4mm 0 0; }
+.cover-description { font-style: italic; color: var(--ink-soft); margin: 5mm 0 0; max-width: 36em; }
+.cover-meta { margin-top: auto; display: flex; gap: 2.5em; align-items: center; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9pt; color: var(--muted); }
+.cover-version { display: inline-block; padding: 0.25em 0.7em; background: var(--gold); color: var(--ink); border-radius: 999px; font-weight: 700; }
+.cover:not(:has(.cover-image)) .cover-text { padding-top: 40mm; }
+.cover:not(:has(.cover-image)) .cover-text::before { content: ""; display: block; width: 60mm; height: 60mm; border-radius: 50%; background: var(--accent); margin-bottom: 12mm; }

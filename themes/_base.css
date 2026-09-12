@@ -1,0 +1,220 @@
+/* ============================================================
+   _base.css — socle commun à tous les thèmes.
+   Couvre chaque bloc qu'un export HTML Notion peut contenir.
+   Un thème redéfinit les variables ci-dessous et ajoute sa personnalité
+   dans theme.css ; il n'a normalement pas besoin de toucher à ce fichier.
+   ============================================================ */
+
+:root {
+  /* couleurs */
+  --paper: #ffffff;
+  --ink: #1b1d22;
+  --ink-soft: #4a4f59;
+  --muted: #7a808c;
+  --accent: #2e5aac;
+  --accent-ink: #ffffff;
+  --rule: #e1e4ea;
+  --surface: #f4f5f8;
+  --code-bg: #f1f2f5;
+
+  /* typo */
+  --font-body: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: Consolas, "SF Mono", Menlo, monospace;
+  --fs-body: 10.5pt;
+  --lh-body: 1.55;
+  --fs-h1: 26pt;
+  --fs-h2: 16pt;
+  --fs-h3: 12.5pt;
+  --fs-h4: 11pt;
+  --fs-small: 8.5pt;
+
+  /* espacements */
+  --space: 0.75em;
+  --radius: 4px;
+  --img-radius: 4px;
+
+  /* couleurs de texte Notion (mark.highlight-*) */
+  --c-gray: #787774; --c-brown: #9f6b53; --c-orange: #d9730d; --c-yellow: #cb912f;
+  --c-green: #448361; --c-blue: #337ea9; --c-purple: #9065b0; --c-pink: #c14c8a; --c-red: #d44c47;
+  /* fonds Notion (block-color-*_background) */
+  --bg-gray: #f1f1ef; --bg-brown: #f4eeee; --bg-orange: #fbecdd; --bg-yellow: #fbf3db;
+  --bg-green: #edf3ec; --bg-blue: #e7f3f8; --bg-purple: #f6f3f9; --bg-pink: #faf1f5; --bg-red: #fdebec;
+}
+
+/* ---------- page / impression ---------- */
+* { box-sizing: border-box; }
+html { background: var(--paper); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.cover-body { background: var(--paper); }
+.cover-body .cover { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+
+section.page { break-before: page; page-break-before: always; }
+section.page.depth-0 { break-before: auto; page-break-before: auto; }
+.toc { break-after: page; page-break-after: always; }
+
+h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; font-family: var(--font-display); line-height: 1.2; margin: 0; }
+figure, table, aside.callout, pre, .mermaid, .bookmark, .column-list { break-inside: avoid; page-break-inside: avoid; }
+p, li { orphans: 3; widows: 3; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+
+/* marqueurs invisibles servant à retrouver les numéros de page (voir render.js) */
+.pg-marker { position: absolute; font-size: 1px; line-height: 1px; color: var(--paper); opacity: 0.02; user-select: none; text-transform: none; letter-spacing: 0; font-family: Arial, sans-serif; }
+
+/* ---------- en-tête de page Notion ---------- */
+.page-header { position: relative; margin: 0 0 1.4em; }
+.page-title { font-size: var(--fs-h1); font-weight: 700; letter-spacing: -0.01em; }
+.page-icon { display: block; font-size: 24pt; margin-bottom: 0.2em; }
+.page-description { color: var(--muted); margin: 0.4em 0 0; }
+.section-cover { display: block; width: 100%; height: 38mm; object-fit: cover; border-radius: var(--img-radius); margin-bottom: 1em; }
+
+/* ---------- texte ---------- */
+.page-body > * { margin: 0 0 var(--space); }
+p { margin: 0 0 var(--space); }
+h2 { font-size: var(--fs-h2); font-weight: 700; margin: 1.6em 0 0.5em; }
+h3 { font-size: var(--fs-h3); font-weight: 700; margin: 1.3em 0 0.4em; }
+h4 { font-size: var(--fs-h4); font-weight: 700; margin: 1.1em 0 0.3em; }
+.page-body > h2:first-child, .page-body > h3:first-child { margin-top: 0; }
+a { color: var(--accent); text-decoration: none; }
+a.link-missing { color: var(--muted); text-decoration: line-through; }
+strong { font-weight: 700; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5em 0; }
+code { font-family: var(--font-mono); font-size: 0.9em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; }
+pre.code { background: var(--code-bg); border-radius: var(--radius); padding: 0.9em 1em; overflow: hidden; }
+pre.code code { background: none; padding: 0; white-space: pre-wrap; word-break: break-word; font-size: 8.5pt; line-height: 1.45; }
+.underline { text-decoration: underline; }
+s, del { color: var(--muted); }
+
+/* ---------- listes ---------- */
+ul, ol { margin: 0 0 var(--space); padding-left: 1.4em; }
+li { margin: 0.15em 0; }
+li > ul, li > ol { margin-bottom: 0; }
+ul.bulleted-list { list-style: disc; }
+ul.bulleted-list ul.bulleted-list { list-style: circle; }
+ol.numbered-list { list-style: decimal; }
+.to-do-list { list-style: none; padding-left: 0; }
+.to-do-list li { display: flex; align-items: baseline; gap: 0.5em; }
+.to-do-list .indented { flex-basis: 100%; padding-left: 1.6em; }
+.checkbox {
+  flex: none; display: inline-block; width: 0.95em; height: 0.95em;
+  border: 1.5px solid var(--ink-soft); border-radius: 3px; position: relative; top: 0.12em;
+}
+.checkbox-on { background: var(--accent); border-color: var(--accent); }
+.checkbox-on::after {
+  content: ""; position: absolute; left: 0.24em; top: 0.05em; width: 0.28em; height: 0.5em;
+  border: solid var(--accent-ink); border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.to-do-children-checked { color: var(--muted); text-decoration: line-through; }
+details.toggle { margin: 0 0 var(--space); }
+details.toggle > summary { cursor: default; font-weight: 600; list-style: none; }
+details.toggle > summary::before { content: "▸"; display: inline-block; width: 1em; color: var(--muted); }
+details.toggle[open] > summary::before { content: "▾"; }
+details.toggle > :not(summary) { margin-left: 1em; }
+
+/* ---------- citations / callouts ---------- */
+blockquote {
+  margin: 0 0 var(--space); padding: 0.3em 0 0.3em 1em;
+  border-left: 3px solid var(--accent); font-style: normal;
+}
+aside.callout {
+  display: flex; gap: 0.7em; align-items: flex-start;
+  margin: 0 0 var(--space); padding: 0.85em 1em; border-radius: var(--radius);
+  background: var(--surface); white-space: pre-wrap;
+}
+aside.callout > .icon { flex: none; font-size: 1.25em; line-height: 1.2; }
+aside.callout > div { flex: 1 1 auto; min-width: 0; }
+aside.callout p { margin: 0 0 0.35em; }
+aside.callout > div > :last-child { margin-bottom: 0; }
+aside.callout figure.image { margin: 0.6em 0 0; }
+
+/* ---------- colonnes ---------- */
+.column-list { display: flex; gap: 1.4em; align-items: flex-start; margin: 0 0 var(--space); }
+.column { flex: 1 1 0; min-width: 0; }
+.column > :last-child { margin-bottom: 0; }
+
+/* ---------- tableaux ---------- */
+table.simple-table, table.collection-content {
+  width: 100%; border-collapse: collapse; margin: 0 0 var(--space); font-size: 0.95em;
+}
+table.simple-table th, table.simple-table td, table.collection-content th, table.collection-content td {
+  border: 1px solid var(--rule); padding: 0.45em 0.7em; text-align: left; vertical-align: top;
+}
+table.simple-table th, table.collection-content th { background: var(--surface); font-weight: 600; }
+table.simple-table td p, table.simple-table th p { margin: 0; }
+table.simple-table th strong { font-weight: 600; }
+table a { word-break: break-all; }
+
+/* ---------- images / figures ---------- */
+figure { margin: 0 0 var(--space); }
+figure.image { text-align: left; }
+figure.image img { display: block; max-width: 100%; max-height: 150mm; width: auto; height: auto; border-radius: var(--img-radius); }
+figcaption { font-size: var(--fs-small); color: var(--muted); margin-top: 0.4em; }
+figure.link-to-page { margin: 0; }
+p.link-to-page { margin: 0 0 0.35em; padding-left: 1.1em; position: relative; }
+p.link-to-page::before { content: "↳"; position: absolute; left: 0; color: var(--muted); }
+p.link-to-page a { font-weight: 600; }
+figure.bookmark { border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.7em 0.9em; }
+figure.bookmark .bookmark-title { font-weight: 600; }
+figure.bookmark .bookmark-description, figure.bookmark .bookmark-href { color: var(--muted); font-size: var(--fs-small); word-break: break-all; }
+figure.bookmark img.icon { display: none; }
+figure.bookmark img.bookmark-image { display: none; }
+.mermaid { text-align: center; margin: 0 0 var(--space); }
+.mermaid svg { max-width: 100%; height: auto; }
+.mermaid[data-processed] { color: var(--ink); }
+
+/* ---------- couleurs Notion ---------- */
+.highlight-gray { color: var(--c-gray); } .highlight-brown { color: var(--c-brown); } .highlight-orange { color: var(--c-orange); }
+.highlight-yellow { color: var(--c-yellow); } .highlight-green { color: var(--c-green); } .highlight-blue { color: var(--c-blue); }
+.highlight-purple { color: var(--c-purple); } .highlight-pink { color: var(--c-pink); } .highlight-red { color: var(--c-red); }
+.highlight-gray_background { background: var(--bg-gray); } .highlight-brown_background { background: var(--bg-brown); }
+.highlight-orange_background { background: var(--bg-orange); } .highlight-yellow_background { background: var(--bg-yellow); }
+.highlight-green_background { background: var(--bg-green); } .highlight-blue_background { background: var(--bg-blue); }
+.highlight-purple_background { background: var(--bg-purple); } .highlight-pink_background { background: var(--bg-pink); }
+.highlight-red_background { background: var(--bg-red); }
+mark[class*="highlight-"] { padding: 0 0.15em; border-radius: 2px; color: inherit; }
+
+.block-color-gray { color: var(--c-gray); } .block-color-brown { color: var(--c-brown); } .block-color-orange { color: var(--c-orange); }
+.block-color-yellow { color: var(--c-yellow); } .block-color-green { color: var(--c-green); } .block-color-blue { color: var(--c-blue); }
+.block-color-purple { color: var(--c-purple); } .block-color-pink { color: var(--c-pink); } .block-color-red { color: var(--c-red); }
+[class*="block-color-"][class*="_background"] { padding: 0.6em 0.9em; border-radius: var(--radius); }
+.block-color-gray_background { background: var(--bg-gray); } .block-color-brown_background { background: var(--bg-brown); }
+.block-color-orange_background { background: var(--bg-orange); } .block-color-yellow_background { background: var(--bg-yellow); }
+.block-color-green_background { background: var(--bg-green); } .block-color-blue_background { background: var(--bg-blue); }
+.block-color-purple_background { background: var(--bg-purple); } .block-color-pink_background { background: var(--bg-pink); }
+.block-color-red_background { background: var(--bg-red); }
+blockquote[class*="_background"] { border-left-color: transparent; padding-left: 1em; }
+aside.callout[class*="_background"] { background: var(--surface); }
+aside.callout.block-color-gray_background { background: var(--bg-gray); }
+aside.callout.block-color-orange_background { background: var(--bg-orange); }
+aside.callout.block-color-yellow_background { background: var(--bg-yellow); }
+aside.callout.block-color-green_background { background: var(--bg-green); }
+aside.callout.block-color-blue_background { background: var(--bg-blue); }
+aside.callout.block-color-purple_background { background: var(--bg-purple); }
+aside.callout.block-color-pink_background { background: var(--bg-pink); }
+aside.callout.block-color-red_background { background: var(--bg-red); }
+aside.callout.block-color-brown_background { background: var(--bg-brown); }
+
+/* ---------- sommaire ---------- */
+.toc-heading { font-size: var(--fs-h1); font-weight: 700; margin: 0 0 1em; }
+.toc-list, .toc-list ul { list-style: none; margin: 0; padding: 0; }
+.toc-list a { display: flex; align-items: baseline; gap: 0.6em; color: var(--ink); }
+.toc-list .toc-title { flex: 0 1 auto; }
+.toc-list a::after { content: ""; flex: 1 1 auto; border-bottom: 1px dotted var(--rule); position: relative; top: -0.3em; }
+.toc-list .toc-num { flex: none; font-variant-numeric: tabular-nums; color: var(--muted); min-width: 1.5em; text-align: right; order: 3; }
+.toc-page > a { font-weight: 700; font-size: 1.05em; margin-top: 0.7em; }
+.toc-page.toc-depth-0 > a { margin-top: 0; }
+.toc-depth-1 > a { padding-left: 0; }
+.toc-depth-2 > a { padding-left: 1.2em; }
+.toc-depth-3 > a { padding-left: 2.4em; }
+.toc-h a { padding-left: 1.4em; font-size: 0.95em; color: var(--ink-soft); }
+.toc-h3 a { padding-left: 2.6em; }
+.toc-h4 a { padding-left: 3.8em; }

@@ -1,0 +1,24 @@
+{
+  "name": "notion2pdf",
+  "version": "0.1.0",
+  "description": "Convertit un export HTML Notion (avec sous-pages) en un seul PDF thémé",
+  "type": "module",
+  "bin": {
+    "notion2pdf": "./cli.js"
+  },
+  "scripts": {
+    "postinstall": "playwright install chromium || echo Chromium non installe : lance npx playwright install chromium ou definis NOTION2PDF_CHROME",
+    "convert": "node cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "cheerio": "^1.0.0",
+    "mermaid": "^11.4.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38",
+    "playwright": "^1.56.0"
+  }
+}
