@@ -1,0 +1,11 @@
+{
+  "description": "La DA du site Absolute Sumo : nuit cosmos, Bangers + Fredoka, titres sticker, cadres à ombre dure, accents or / cyan / orange / rouge.",
+  "tocTitle": "Contents",
+  "pageBackground": "#c0c9ec",
+  "mermaidTheme": "neutral",
+  "pdf": {
+    "format": "A4",
+    "margin": { "top": "20mm", "right": "17mm", "bottom": "22mm", "left": "17mm" },
+    "footerTemplate": "<div style=\"-webkit-print-color-adjust:exact;width:100%;font-family:Fredoka,'Segoe UI',Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3a4066;padding:0 17mm;display:flex;justify-content:space-between;align-items:center\"><span>{{title}}</span><span class=\"pageNumber\" style=\"-webkit-print-color-adjust:exact;display:inline-block;min-width:16px;padding:0 5px;height:17px;line-height:15px;text-align:center;border:1.5px solid #0a0e24;border-radius:3px;background:#ffc42e;color:#0a0e24;box-shadow:2px 2px 0 #0a0e24;letter-spacing:0\"></span></div>"
+  }
+}

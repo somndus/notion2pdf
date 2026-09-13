@@ -1,0 +1,146 @@
+/* comics — la DA du site Absolute Sumo transposée au GDD.
+   Bande claire du site (bleu lavande), Bangers pour les titres (sticker crème : contour encre + ombre dure),
+   Fredoka pour le texte, cadres épais à ombre décalée, accent qui change à chaque section. */
+:root {
+  --paper: #c0c9ec;         /* bande claire du site (bandLight) */
+  --ink-line: #0a0e24;      /* encre cosmos : contours + ombres */
+  --indigo: #191f4a;        /* panneaux */
+  --indigo-2: #232a63;
+  --gold: #ffc42e;
+  --cyan: #57c8ff;
+  --orange: #ff6a2b;
+  --red: #ff4560;
+  --blue: #3f7bff;
+  --cream: #fdf6ea;
+
+  --ink: #3a4066;
+  --ink-soft: #4a5280;
+  --muted: #6b7399;
+  --accent: var(--gold);
+  --accent-ink: var(--ink-line);
+  --rule: #9aa5d6;
+  --surface: #d6ddf7;
+  --code-bg: #0e1330;
+
+  --font-body: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Bangers", Impact, "Arial Black", sans-serif;
+  --fs-body: 10.5pt;
+  --lh-body: 1.6;
+  --fs-h1: 34pt;
+  --fs-h2: 19pt;
+  --fs-h3: 14pt;
+  --fs-h4: 11.5pt;
+  --radius: 3px;
+  --img-radius: 0;
+
+  /* couleurs Notion adaptées au fond sombre */
+  --c-gray: #5f668c; --c-brown: #8a5a3c; --c-orange: #d8551a; --c-yellow: #b07d0a;
+  --c-green: #2f7d4b; --c-blue: #2a4fc7; --c-purple: #7a4fc4; --c-pink: #c2397e; --c-red: #d92c46;
+  --bg-gray: #d6ddf7; --bg-brown: #e6d9d3; --bg-orange: #f6ddcc; --bg-yellow: #f6ebc3;
+  --bg-green: #d6ecdb; --bg-blue: #d0e2f8; --bg-purple: #e2daf5; --bg-pink: #f3d8e6; --bg-red: #f5d2d7;
+}
+
+/* accent cyclé par section, comme les bandes du site (or, cyan, orange, rouge, bleu) */
+section.page:nth-of-type(5n+1) { --accent: var(--gold); }
+section.page:nth-of-type(5n+2) { --accent: var(--cyan); }
+section.page:nth-of-type(5n+3) { --accent: var(--orange); }
+section.page:nth-of-type(5n+4) { --accent: var(--red); }
+section.page:nth-of-type(5n+5) { --accent: var(--blue); }
+
+body { font-weight: 400; }
+.doc-body { background: linear-gradient(180deg, #c6cff0 0%, #b6c1ea 100%); }
+strong { font-weight: 600; color: var(--ink-line); }
+a { color: #2a4fc7; }
+
+/* ---- titres sticker ---- */
+.page-title, h2, h3, .toc-heading, .cover-title {
+  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.03em;
+  color: var(--cream); paint-order: stroke fill;
+}
+.page-header { margin-bottom: 2em; padding-top: 2mm; }
+.page-title {
+  display: inline-block; transform: rotate(-1.5deg); transform-origin: left bottom;
+  -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line);
+  line-height: 1;
+}
+.page-title::after {
+  content: ""; display: block; width: 3em; height: 7px; margin-top: 0.35em;
+  background: var(--accent); border: 2px solid var(--ink-line); border-radius: var(--radius);
+}
+h2 { -webkit-text-stroke: 1.6px var(--ink-line); text-shadow: 3px 3px 0 var(--ink-line); margin-top: 1.8em; }
+h3 { -webkit-text-stroke: 1.2px var(--ink-line); text-shadow: 2px 2px 0 var(--ink-line); }
+h4 { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 9pt; color: var(--ink-line); }
+.page-description { color: var(--ink-soft); font-weight: 500; }
+
+/* ---- cadres à ombre dure (screenshots, callouts, tableaux, code) ---- */
+figure.image img { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
+figure.image { margin-bottom: calc(var(--space) + 5px); }
+aside.callout, aside.callout[class*="_background"] {
+  background: linear-gradient(180deg, #2a3370 0%, #232c64 100%); color: var(--cream);
+  border: 3px solid var(--ink-line); border-radius: var(--radius);
+  box-shadow: 5px 5px 0 var(--ink-line); margin-bottom: calc(var(--space) + 6px);
+}
+aside.callout strong { color: var(--cream); }
+aside.callout a { color: var(--cyan); }
+aside.callout figure.image img { box-shadow: none; }
+blockquote, blockquote[class*="_background"] {
+  background: #dfe5fa; border-left: 6px solid var(--accent); border: 2px solid var(--ink-line); border-left-width: 6px; border-radius: var(--radius);
+  padding: 0.7em 1em; font-weight: 500; color: var(--ink-line);
+}
+pre.code { border: 2px solid var(--ink-line); color: var(--cream); box-shadow: 4px 4px 0 var(--ink-line); }
+pre.code code { color: var(--cream); }
+code { color: var(--gold); }
+
+table.simple-table { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); margin-bottom: calc(var(--space) + 6px); }
+table.simple-table th, table.simple-table td { border-color: var(--rule); }
+table.simple-table th {
+  background: var(--ink-line); color: var(--cyan); font-weight: 700; font-size: 8pt;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+table.simple-table th strong { color: inherit; }
+table.simple-table td { background: #e6ebfb; color: var(--ink-line); }
+table.simple-table tr:nth-child(even) td { background: #dde4f8; }
+table.simple-table th, table.simple-table td { border-color: #b3bde4; }
+
+.checkbox { border: 2px solid var(--ink-line); border-radius: var(--radius); }
+.checkbox-on { background: var(--gold); border-color: var(--ink-line); }
+.checkbox-on::after { border-color: var(--ink-line); }
+ul.bulleted-list li::marker { color: var(--accent); }
+hr { border-top: 2px solid var(--ink-line); }
+p.link-to-page::before { color: var(--accent); }
+figure.bookmark { background: #e6ebfb; border: 2px solid var(--ink-line); box-shadow: 4px 4px 0 var(--ink-line); }
+.section-cover { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
+
+/* ---- sommaire ---- */
+.toc-heading { display: inline-block; transform: rotate(-1.5deg); -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line); margin-bottom: 1.4em; }
+.toc-list a::after { border-bottom-color: #8f9bd0; }
+.toc-page > a { font-family: var(--font-display); font-weight: 400; font-size: 13pt; letter-spacing: 0.03em; color: var(--ink-line); margin-top: 0.55em; }
+.toc-list .toc-num { color: var(--ink-line); font-weight: 700; }
+.toc-h a { color: var(--ink); font-weight: 500; }
+
+/* ---- couverture : key art plein cadre, liseré énergie, titre sticker ---- */
+.cover { display: flex; flex-direction: column; background: var(--paper); }
+.cover-image { flex: 0 0 60%; overflow: hidden; position: relative; background: var(--ink-line); }
+.cover-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-image::after { content: none; }
+.cover-edge {
+  height: 4px; margin: 0 -2px;
+  background: linear-gradient(90deg, transparent, var(--blue) 15%, var(--cyan) 40%, var(--gold) 60%, var(--orange) 82%, transparent);
+}
+.cover-text { flex: 1 1 auto; padding: 8mm 16mm 14mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cover-badge {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--font-body); font-weight: 700; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-line); background: var(--gold); border: 2.5px solid var(--ink-line); border-radius: var(--radius);
+  padding: 0.35em 0.9em; transform: rotate(-1.5deg); box-shadow: 3px 3px 0 var(--ink-line); margin-bottom: 6mm;
+}
+.cover-badge::before { content: ""; width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--red); border: 1.5px solid var(--ink-line); }
+.cover-title {
+  font-size: 54pt; line-height: 0.95; margin: 0; max-width: 10em;
+  -webkit-text-stroke: 3px var(--ink-line); text-shadow: 6px 6px 0 var(--ink-line);
+}
+.cover-subtitle { font-family: var(--font-display); font-size: 18pt; color: var(--orange); letter-spacing: 0.04em; margin: 3mm 0 0; -webkit-text-stroke: 1.2px var(--ink-line); paint-order: stroke fill; text-shadow: 2px 2px 0 var(--ink-line); }
+.cover-description { color: var(--ink); font-weight: 500; margin: 5mm 0 0; max-width: 40em; }
+.cover-meta { margin-top: auto; display: flex; gap: 2em; align-items: center; justify-content: center; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+.cover-version { color: var(--ink-line); background: var(--gold); border: 2px solid var(--ink-line); border-radius: var(--radius); padding: 0.2em 0.7em; box-shadow: 2px 2px 0 var(--ink-line); }
+.cover:not(:has(.cover-image)) .cover-text { padding-top: 50mm; }

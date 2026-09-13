@@ -3,11 +3,12 @@
 import { parseArgs } from "node:util";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { prepareInput, findRoot, buildTree } from "./src/parse.js";
 import { loadTheme, buildDocument } from "./src/merge.js";
 import { renderPdf } from "./src/render.js";
 
-const PKG_ROOT = path.dirname(new URL(import.meta.url).pathname);
+const PKG_ROOT = path.dirname(fileURLToPath(import.meta.url));
 
 const HELP = `
 notion2pdf — convertit un export HTML Notion (avec sous-pages) en un seul PDF

@@ -1,11 +1,11 @@
 // Assemble l'arbre de pages en un seul document HTML prêt à imprimer.
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
 import { idFromFilename } from "./parse.js";
 
-const PKG_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const PKG_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function decodeHref(href) {
   try { return decodeURIComponent(href); } catch { return href; }

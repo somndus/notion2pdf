@@ -1,0 +1,14 @@
+<div class="cover">
+  {{#if coverImage}}<div class="cover-image"><img src="{{coverImage}}" alt=""></div>{{/if}}
+  <div class="cover-edge"></div>
+  <div class="cover-text">
+    {{#if subtitle}}<span class="cover-badge">{{subtitle}}</span>{{/if}}
+    <h1 class="cover-title">{{title}}</h1>
+    {{#if description}}<p class="cover-description">{{description}}</p>{{/if}}
+    <div class="cover-meta">
+      {{#if version}}<span class="cover-version">{{version}}</span>{{/if}}
+      <span class="cover-date">{{date}}</span>
+      {{#if author}}<span class="cover-author">{{author}}</span>{{/if}}
+    </div>
+  </div>
+</div>
