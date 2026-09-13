@@ -63,7 +63,12 @@ section.page.depth-0 { break-before: auto; page-break-before: auto; }
 .toc { break-after: page; page-break-after: always; }
 
 h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; font-family: var(--font-display); line-height: 1.2; margin: 0; }
-figure, table, aside.callout, pre, .mermaid, .bookmark, .column-list { break-inside: avoid; page-break-inside: avoid; }
+/* Restent insécables : une image, une carte, un bloc de code — jamais coupés en deux. */
+figure, aside.callout, pre, .mermaid, .bookmark { break-inside: avoid; page-break-inside: avoid; }
+/* Peuvent se répartir sur plusieurs pages (sinon un grand tableau ou une grille de cartes
+   qui ne rentre pas saute EN ENTIER à la page suivante et laisse une grande zone vide). */
+table, .column-list, .column { break-inside: auto; page-break-inside: auto; }
+thead { display: table-header-group; }   /* réaffiche l'en-tête sur chaque page si le tableau se coupe */
 p, li { orphans: 3; widows: 3; }
 tr { break-inside: avoid; page-break-inside: avoid; }
 
