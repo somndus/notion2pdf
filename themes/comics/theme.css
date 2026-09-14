@@ -2,7 +2,7 @@
    Bande claire du site (bleu lavande), Bangers pour les titres (sticker crème : contour encre + ombre dure),
    Fredoka pour le texte, cadres épais à ombre décalée, accent qui change à chaque section. */
 :root {
-  --paper: #c0c9ec;         /* bande claire du site (bandLight) */
+  --paper: #c4cdef;         /* fond uni (bande claire du site) */
   --ink-line: #0a0e24;      /* encre cosmos : contours + ombres */
   --indigo: #191f4a;        /* panneaux */
   --indigo-2: #232a63;
@@ -50,7 +50,7 @@ section.page:nth-of-type(5n+4) { --accent: var(--red); }
 section.page:nth-of-type(5n+5) { --accent: var(--blue); }
 
 body { font-weight: 400; }
-.doc-body { background: linear-gradient(180deg, #c6cff0 0%, #b6c1ea 100%); }
+.doc-body { background: #c4cdef; }
 strong { font-weight: 600; color: var(--ink-line); }
 a { color: #243fb0; }
 
@@ -61,7 +61,7 @@ a { color: #243fb0; }
 }
 .page-header { margin-bottom: 2em; padding-top: 2mm; }
 .page-title {
-  display: inline-block; transform: rotate(-1.5deg); transform-origin: left bottom;
+  display: inline-block;
   -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line);
   line-height: 1;
 }
@@ -131,7 +131,7 @@ figure.bookmark { background: var(--card); border: 3px solid var(--ink-line); bo
 .section-cover { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
 
 /* ---- sommaire ---- */
-.toc-heading { display: inline-block; transform: rotate(-1.5deg); -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line); margin-bottom: 1.4em; }
+.toc-heading { display: inline-block; -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line); margin-bottom: 1.4em; }
 .toc-list a::after { border-bottom-color: #8f9bd0; }
 .toc-page > a { font-family: var(--font-display); font-weight: 400; font-size: 13pt; letter-spacing: 0.03em; color: var(--ink-line); margin-top: 0.55em; }
 .toc-list .toc-num { color: var(--ink-line); font-weight: 700; }
