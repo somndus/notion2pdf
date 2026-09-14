@@ -62,13 +62,16 @@ section.page { break-before: page; page-break-before: always; }
 section.page.depth-0 { break-before: auto; page-break-before: auto; }
 .toc { break-after: page; page-break-after: always; }
 
-h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; font-family: var(--font-display); line-height: 1.2; margin: 0; }
-/* Restent insécables : une image, une carte, un bloc de code — jamais coupés en deux. */
-figure, aside.callout, pre, .mermaid, .bookmark { break-inside: avoid; page-break-inside: avoid; }
-/* Peuvent se répartir sur plusieurs pages (sinon un grand tableau ou une grille de cartes
-   qui ne rentre pas saute EN ENTIER à la page suivante et laisse une grande zone vide). */
-table, .column-list, .column { break-inside: auto; page-break-inside: auto; }
-thead { display: table-header-group; }   /* réaffiche l'en-tête sur chaque page si le tableau se coupe */
+/* Titres : jamais coupés en deux, et rattachés au bloc qui suit (pas de titre seul en bas de page). */
+h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; break-inside: avoid; page-break-inside: avoid; font-family: var(--font-display); line-height: 1.2; margin: 0; }
+/* Par défaut tout bloc reste d'un seul tenant : s'il ne rentre pas, il part entier à la page suivante. */
+figure, aside.callout, pre, .mermaid, .bookmark, table, .column-list, .column { break-inside: avoid; page-break-inside: avoid; }
+/* Grille de cartes : se coupe rangée par rangée en gardant les colonnes alignées. */
+.card-grid { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 1.4em; align-items: start; margin: 0 0 var(--space); break-inside: auto; page-break-inside: auto; }
+.card-grid > * { min-width: 0; margin: 0 !important; }
+/* Posé par le convertisseur sur les tableaux plus hauts qu'une page : autorisé à se couper (en-tête répété). */
+.allow-split { break-inside: auto !important; page-break-inside: auto !important; }
+thead { display: table-header-group; }
 p, li { orphans: 3; widows: 3; }
 tr { break-inside: avoid; page-break-inside: avoid; }
 

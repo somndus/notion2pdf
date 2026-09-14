@@ -115,6 +115,22 @@ function cleanBody(page, ctx) {
     $(col).attr("style", `flex:${parseFloat($(col).attr("data-ratio")) || 1} 1 0`);
   });
 
+  // Grilles de cartes : une column-list où chaque colonne contient le MÊME nombre (>=2) de blocs
+  // est une vraie grille. Notion la stocke en colonnes (col1=[A,C], col2=[B,D]) ; on ré-ordonne en
+  // lignes (A,B,C,D) et on la rend en CSS grid, pour qu'elle se coupe rangée par rangée en gardant
+  // les colonnes alignées, au lieu que chaque colonne se décale de son côté à la pagination.
+  $body.find(".column-list").each((_, cl) => {
+    const $cl = $(cl);
+    const cols = $cl.children(".column").toArray();
+    if (cols.length < 2) return;
+    const cells = cols.map((c) => $(c).children().toArray());
+    const k = cells[0].length;
+    if (k < 2 || !cells.every((cc) => cc.length === k)) return; // 1 bloc/colonne (screenshots, piliers) → on laisse en flex
+    const $grid = $(`<div class="card-grid" style="--cols:${cols.length}"></div>`);
+    for (let r = 0; r < k; r++) for (let c = 0; c < cols.length; c++) $grid.append($(cells[c][r]));
+    $cl.replaceWith($grid);
+  });
+
   // Scripts/CSS externes injectés par Notion (prism…) : inutiles hors ligne
   $body.find("script, link").remove();
 

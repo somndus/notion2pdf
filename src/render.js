@@ -27,7 +27,7 @@ async function launch() {
 }
 
 /** Charge un HTML dans une page et attend polices, images et mermaid */
-async function loadHtml(browser, html, workDir, name, compress) {
+async function loadHtml(browser, html, workDir, name, compress, measure) {
   const file = path.join(workDir, `${name}.html`);
   fs.writeFileSync(file, html);
   const page = await browser.newPage();
@@ -66,6 +66,17 @@ async function loadHtml(browser, html, workDir, name, compress) {
     }, compress);
   }
   await page.emulateMedia({ media: "print" });
+
+  // Mesure : à la largeur exacte du contenu imprimé, on repère les tableaux plus hauts
+  // qu'une page et on les autorise à se couper (les autres restent d'un seul tenant).
+  if (measure && measure.contentW > 0) {
+    await page.setViewportSize({ width: measure.contentW, height: Math.max(400, Math.round(measure.contentH)) });
+    await page.evaluate((maxH) => {
+      for (const t of document.querySelectorAll("table")) {
+        if (t.getBoundingClientRect().height > maxH) t.classList.add("allow-split");
+      }
+    }, measure.contentH * 0.96);
+  }
   return page;
 }
 
@@ -206,6 +217,15 @@ export async function renderPdf(doc, theme, opts) {
   pdfOpts.headerTemplate = sub(pdfOpts.headerTemplate, doc.vars);
   pdfOpts.footerTemplate = sub(pdfOpts.footerTemplate, doc.vars);
 
+  // Boîte de contenu imprimée (mm → px @96dpi) pour mesurer les blocs à la bonne largeur
+  const mm = (v) => parseFloat(String(v)) || 0;
+  const fmt = /letter/i.test(pdfOpts.format) ? { w: 215.9, h: 279.4 } : { w: 210, h: 297 };
+  const PX = 96 / 25.4;
+  const measure = {
+    contentW: Math.round((fmt.w - mm(pdfOpts.margin.left) - mm(pdfOpts.margin.right)) * PX),
+    contentH: (fmt.h - mm(pdfOpts.margin.top) - mm(pdfOpts.margin.bottom)) * PX,
+  };
+
   const workDir = opts.keepHtml ? path.resolve(opts.keepHtml) : fs.mkdtempSync(path.join(os.tmpdir(), "notion2pdf-html-"));
   fs.mkdirSync(workDir, { recursive: true });
 
@@ -214,14 +234,14 @@ export async function renderPdf(doc, theme, opts) {
     let coverBytes = null;
     if (opts.cover !== false) {
       log("Couverture…");
-      const p = await loadHtml(browser, doc.coverHtml, workDir, "cover", opts.compress);
+      const p = await loadHtml(browser, doc.coverHtml, workDir, "cover", opts.compress, null);
       coverBytes = await toPdf(p, pdfOpts, false);
       await p.close();
     }
 
     log("Corps du document (passe 1)…");
     let bodyHtml = doc.bodyHtml;
-    let p = await loadHtml(browser, bodyHtml, workDir, "document", opts.compress);
+    let p = await loadHtml(browser, bodyHtml, workDir, "document", opts.compress, measure);
     let bodyBytes = await toPdf(p, pdfOpts, true);
     await p.close();
 
@@ -230,7 +250,7 @@ export async function renderPdf(doc, theme, opts) {
       pageOf = await locateMarkers(bodyBytes);
       log(`Numérotation du sommaire (passe 2, ${pageOf.numPages} pages)…`);
       bodyHtml = fillTocNumbers(bodyHtml, pageOf);
-      p = await loadHtml(browser, bodyHtml, workDir, "document", opts.compress);
+      p = await loadHtml(browser, bodyHtml, workDir, "document", opts.compress, measure);
       bodyBytes = await toPdf(p, pdfOpts, true);
       await p.close();
     }

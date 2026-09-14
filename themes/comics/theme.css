@@ -89,6 +89,11 @@ aside.callout strong { color: var(--ink-line); }
 aside.callout a { color: #243fb0; }
 aside.callout figure.image img { box-shadow: none; border-width: 2px; }
 aside.callout > .icon { filter: none; }
+/* Cartes en grille (fiches persos, arènes) : cadre IDENTIQUE pour toutes (pas de liseré d'accent
+   asymétrique selon la colonne). Le liseré d'accent reste sur les encadrés d'info autonomes. */
+.card-grid aside.callout, .card-grid aside.callout[class*="_background"] {
+  border: 3px solid var(--ink-line);
+}
 
 blockquote, blockquote[class*="_background"] {
   background: var(--card); color: var(--ink);

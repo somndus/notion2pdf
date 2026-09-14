@@ -57,6 +57,14 @@ node cli.js ./dossier-deja-dezippe/ --keep-html ./build
    sur quelle page tombe chaque section, la seconde écrit les numéros dans le sommaire),
    puis fusionne couverture + corps avec pdf-lib et ajoute les signets.
 
+## Thèmes fournis
+
+- `studio` : blanc, encre, cobalt. Neutre, pour partager.
+- `dojo` : papier de riz, vermillon, or. Titres condensés en capitales.
+- `comics` : la DA du site Absolute Sumo (nuit cosmos, Bangers + Fredoka, titres sticker,
+  cadres à ombre dure, accent qui tourne à chaque section). Polices embarquées dans `fonts/`
+  (licence OFL, fichiers `LICENSE-*.txt`).
+
 ## Créer un thème
 
 Copie `themes/studio` vers `themes/mon-theme`. Un thème contient :
