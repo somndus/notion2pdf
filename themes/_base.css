@@ -96,6 +96,8 @@ a { color: var(--accent); text-decoration: none; }
 a.link-missing { color: var(--muted); text-decoration: line-through; }
 strong { font-weight: 700; }
 hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5em 0; }
+/* Séparateur Notion (---) converti en saut de page (voir merge.js). Boîte invisible, zéro hauteur. */
+.page-break { break-before: page; page-break-before: always; height: 0; margin: 0; border: 0; padding: 0; visibility: hidden; }
 code { font-family: var(--font-mono); font-size: 0.9em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; }
 pre.code { background: var(--code-bg); border-radius: var(--radius); padding: 0.9em 1em; overflow: hidden; }
 pre.code code { background: none; padding: 0; white-space: pre-wrap; word-break: break-word; font-size: 8.5pt; line-height: 1.45; }

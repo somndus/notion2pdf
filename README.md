@@ -134,3 +134,7 @@ schéma), séparateurs, liens internes (réécrits en ancres), covers et icônes
 
 Non pris en charge : vidéos et embeds (ignorés), bases de données en vue galerie/board
 (exportées par Notion comme tableau, donc affichées comme tel).
+
+### Last CMD
+node cli.js ..\export.zip -t comics -o ..\GDD.pdf --version v0.3 --author "SCHARTIER Isaac"           
+node cli.js ..\du_rpg_export.zip -t comics -o ..\GDD_DU.pdf --version v0.3 --author "SCHARTIER Isaac"

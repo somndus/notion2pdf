@@ -32,6 +32,7 @@ Options
       --no-page-numbers    Pas de numéros dans le sommaire (une seule passe, plus rapide)
       --no-demote          Ne pas rétrograder les titres (H1 Notion reste H1)
       --keep-links         Garder les liens "sous-page" de Notion dans le texte (retirés par défaut quand il y a un sommaire)
+      --no-hr-break        Ne pas transformer les séparateurs "---" de Notion en sauts de page (garde le trait visible)
       --image-width <px>   Largeur max des images embarquées (défaut : 1600 ; 0 = pas de redimensionnement)
       --image-quality <q>  Qualité JPEG 0-1 (défaut : 0.85)
       --no-compress        Embarquer les images telles quelles (PDF beaucoup plus lourd)
@@ -65,6 +66,7 @@ try {
       "no-page-numbers": { type: "boolean" },
       "no-demote": { type: "boolean" },
       "keep-links": { type: "boolean" },
+      "no-hr-break": { type: "boolean" },
       "keep-html": { type: "string" },
       "image-width": { type: "string", default: "1600" },
       "image-quality": { type: "string", default: "0.85" },
@@ -111,7 +113,7 @@ try {
   const doc = buildDocument(tree, theme, {
     title: v.title, subtitle: v.subtitle, version: v.version, author: v.author,
     toc: !v["no-toc"], tocDepth: parseInt(v["toc-depth"]) || 2,
-    demoteHeadings: !v["no-demote"], keepLinks: v["keep-links"], lang: v.lang, locale: v.lang === "fr" ? "fr-FR" : v.lang,
+    demoteHeadings: !v["no-demote"], keepLinks: v["keep-links"], hrPageBreak: !v["no-hr-break"], lang: v.lang, locale: v.lang === "fr" ? "fr-FR" : v.lang,
   });
   if (doc.hasMermaid) log("Diagramme(s) Mermaid détecté(s) : rendu via mermaid.js");
 

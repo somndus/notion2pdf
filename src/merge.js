@@ -131,6 +131,16 @@ function cleanBody(page, ctx) {
     $cl.replaceWith($grid);
   });
 
+  // Séparateur Notion (---) → saut de page (par défaut ; --no-hr-break garde le trait visible).
+  // Un séparateur en tout début ou toute fin de page ne sert à rien : on le retire.
+  if (ctx.hrPageBreak) {
+    $body.find("hr").each((_, hr) => {
+      const $hr = $(hr);
+      if (!$hr.prevAll().length || !$hr.nextAll().length) { $hr.remove(); return; }
+      $hr.replaceWith('<div class="page-break" aria-hidden="true"></div>');
+    });
+  }
+
   // Scripts/CSS externes injectés par Notion (prism…) : inutiles hors ligne
   $body.find("script, link").remove();
 
@@ -196,7 +206,7 @@ export function buildDocument(tree, theme, opts = {}) {
   const { root, pages, dir } = tree;
   const tocDepth = opts.tocDepth ?? 2;
   const ctx = { dir, pageIds: new Set(pages.map((p) => p.id)), hasMermaid: false, demoteHeadings: opts.demoteHeadings !== false, tocDepth,
-    stripLinks: opts.toc !== false && opts.keepLinks !== true };
+    stripLinks: opts.toc !== false && opts.keepLinks !== true, hrPageBreak: opts.hrPageBreak !== false };
   const title = opts.title || root.title;
   const now = new Date();
   const vars = {
