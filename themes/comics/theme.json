@@ -1,11 +1,51 @@
 {
-  "description": "La DA du site Absolute Sumo : nuit cosmos, Bangers + Fredoka, titres sticker, cadres à ombre dure, accents or / cyan / orange / rouge.",
+  "description": "La DA du jeu Absolute Sumo : papier crème, bandeaux noirs façon menus du jeu, ouverture de chapitre en couleur (rayons, trame), onglets de chapitre, titres Lilita One / Bangers, texte Fredoka.",
   "tocTitle": "Contents",
-  "pageBackground": "#c4cdef",
-  "mermaidTheme": "neutral",
+  "tocPalette": "night",
+  "pageBackground": "#fbf5e8",
+  "fitText": ".lyr-title, .cover-kicker",
+  "layerBackgrounds": true,
+  "calloutGrid": 2,
+  "palettes": ["blue", "orange", "magenta", "teal", "purple", "gold", "green", "red", "pink"],
+  "paletteRules": [
+    ["^game design document$|overview|summary", "blue"],
+    ["vision|pillar", "gold"],
+    ["gameplay|core loop|mechanic", "orange"],
+    ["control|input", "purple"],
+    ["game ?modes?", "blue"],
+    ["character|roster|sumos", "pink"],
+    ["arena|level|map", "teal"],
+    ["shop|custom|cosmetic", "magenta"],
+    ["achievement|trophy|trophies", "gold"],
+    ["challenge|quest", "orange"],
+    ["network|online|multiplayer", "teal"],
+    ["\\bui\\b|\\bux\\b|screen|interface|menu", "purple"],
+    ["\\bart\\b|audio|sound|music", "red"],
+    ["business|platform|roadmap|marketing", "green"],
+    ["tool|pipeline|tech", "slate"],
+    ["team|credit", "blue"]
+  ],
+  "mermaidTheme": "base",
+  "mermaidConfig": {
+    "fontFamily": "Fredoka, sans-serif",
+    "themeVariables": {
+      "fontFamily": "Fredoka, sans-serif",
+      "fontSize": "15px",
+      "primaryColor": "#fff3a8",
+      "primaryBorderColor": "#0c0c16",
+      "primaryTextColor": "#0c0c16",
+      "secondaryColor": "#8fd0ff",
+      "tertiaryColor": "#fbf5e8",
+      "lineColor": "#0c0c16",
+      "textColor": "#2b2840",
+      "edgeLabelBackground": "#fbf5e8",
+      "clusterBkg": "#fbf5e8",
+      "clusterBorder": "#0c0c16"
+    }
+  },
   "pdf": {
     "format": "A4",
-    "margin": { "top": "20mm", "right": "17mm", "bottom": "22mm", "left": "17mm" },
-    "footerTemplate": "<div style=\"-webkit-print-color-adjust:exact;width:100%;font-family:Fredoka,'Segoe UI',Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3a4066;padding:0 17mm;display:flex;justify-content:space-between;align-items:center\"><span>{{title}}</span><span class=\"pageNumber\" style=\"-webkit-print-color-adjust:exact;display:inline-block;min-width:16px;padding:0 5px;height:17px;line-height:15px;text-align:center;border:1.5px solid #0a0e24;border-radius:3px;background:#ffc42e;color:#0a0e24;box-shadow:2px 2px 0 #0a0e24;letter-spacing:0\"></span></div>"
+    "margin": { "top": "19mm", "right": "16mm", "bottom": "18mm", "left": "16mm" },
+    "footerTemplate": "<style>{{font:LilitaOne}}</style><div style=\"-webkit-print-color-adjust:exact;print-color-adjust:exact;width:100%;height:18mm;position:relative;margin:0\"><span class=\"pageNumber\" style=\"position:absolute;right:16mm;top:5.2mm;min-width:9mm;height:7.4mm;padding:0 2mm;box-sizing:border-box;text-align:center;font-family:LilitaOne,'Arial Black',sans-serif;font-size:13px;line-height:6.4mm;color:#fff;-webkit-text-stroke:2.5px #0c0c16;paint-order:stroke fill;background:linear-gradient(110deg,#fff3a8 0%,#ffd23a 45%,#f2a516 100%);border:0.6mm solid #0c0c16;box-shadow:0.6mm 0.8mm 0 #0c0c16;transform:skewX(-10deg)\"></span></div>"
   }
 }

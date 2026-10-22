@@ -12,11 +12,13 @@ function decodeHref(href) {
 }
 const esc = (s = "") => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-/** Mini-moteur de template : {{var}}, {{#if var}}…{{/if}} */
+/** Mini-moteur de template : {{var}}, {{#if var}}…{{/if}} (imbricables) */
 export function renderTemplate(tpl, vars) {
-  return tpl
-    .replace(/{{#if (\w+)}}([\s\S]*?){{\/if}}/g, (_, k, body) => (vars[k] ? body : ""))
-    .replace(/{{(\w+)}}/g, (_, k) => (vars[k] == null ? "" : String(vars[k])));
+  // blocs les plus internes d'abord (corps sans autre {{#if), jusqu'à ce qu'il n'en reste plus
+  const inner = /{{#if (\w+)}}((?:(?!{{#if )[\s\S])*?){{\/if}}/g;
+  let out = tpl, prev;
+  do { prev = out; out = out.replace(inner, (_, k, body) => (vars[k] ? body : "")); } while (out !== prev);
+  return out.replace(/{{(\w+)}}/g, (_, k) => (vars[k] == null ? "" : String(vars[k])));
 }
 
 /** Charge un thème : CSS + config + template de couverture */
@@ -32,8 +34,20 @@ export function loadTheme(name) {
     baseCss: fs.readFileSync(path.join(PKG_ROOT, "themes", "_base.css"), "utf8"),
     css: read("theme.css"),
     coverTemplate: read("cover.html", fs.readFileSync(path.join(PKG_ROOT, "themes", "_cover.html"), "utf8")),
+    pageTemplate: read("page.html"),
     fontsCss: buildFontFaces(path.join(dir, "fonts")),
   };
+}
+
+/** @font-face d'une famille du thème en data: URI (pour les gabarits d'en-tête / pied de page de Chromium,
+    qui ne chargent aucune ressource externe) */
+export function fontFaceData(theme, family) {
+  const fontsDir = path.join(theme.dir, "fonts");
+  if (!fs.existsSync(fontsDir)) return "";
+  const f = fs.readdirSync(fontsDir).find((f) => f.startsWith(`${family}-`) && /\.woff2$/i.test(f));
+  if (!f) return "";
+  const b64 = fs.readFileSync(path.join(fontsDir, f)).toString("base64");
+  return `@font-face{font-family:"${family}";src:url(data:font/woff2;base64,${b64})}`;
 }
 
 /** Génère des @font-face pour chaque fichier dans themes/<x>/fonts : Nom-Poids.woff2 → font-family "Nom" */
@@ -168,6 +182,60 @@ function cleanBody(page, ctx) {
     }
   }
 
+  // Notion exporte chaque puce dans sa propre liste : on regroupe les listes consécutives du même type
+  // (espacement régulier, et le thème peut empêcher une courte liste de se couper)
+  $body.find("ul.bulleted-list, ol.numbered-list").each((_, el) => {
+    const $el = $(el);
+    if (!$el.parent().length) return; // déjà fusionnée dans la précédente
+    const cls = $el.hasClass("bulleted-list") ? "bulleted-list" : "numbered-list";
+    let $next = $el.next();
+    while ($next.length && $next.is(`${el.tagName}.${cls}`)) {
+      $el.append($next.children("li"));
+      const $gone = $next;
+      $next = $next.next();
+      $gone.remove();
+    }
+  });
+
+  // Paragraphes vides laissés par Notion en fin de colonne / de callout : ils décalent les blocs voisins
+  $body.find(".column, aside.callout > div").each((_, el) => {
+    let $last = $(el).children().last();
+    while ($last.is("p") && !$last.text().trim() && !$last.find("img").length) { $last.remove(); $last = $(el).children().last(); }
+  });
+
+  // Texte des titres enveloppé dans un span : un thème peut le styler (étiquette, bandeau) sans toucher au bloc
+  $body.find("h2, h3, h4").each((_, h) => { $(h).html(`<span class="h-text">${$(h).html()}</span>`); });
+
+  // Callout dont le premier paragraphe est entièrement en gras : c'est son titre (fiche perso, arène, pilier…)
+  $body.find("aside.callout").each((_, el) => {
+    const $first = $(el).children("div").first().children().first();
+    const $strong = $first.children("strong");
+    if ($first.is("p") && $first.children().length === 1 && $strong.length === 1
+      && $first.text().trim() && $first.text().trim() === $strong.text().trim()) {
+      $first.addClass("callout-title");
+      $(el).addClass("has-title");
+    }
+  });
+
+  // Fiches à la suite (callouts titrés avec une image : persos, arènes…) → grille de cartes, si le thème
+  // le demande ("calloutGrid": nombre de colonnes)
+  if (ctx.calloutGrid > 1) {
+    let run = [];
+    const flush = () => {
+      if (run.length >= 2) {
+        const $grid = $(`<div class="card-grid" style="--cols:${ctx.calloutGrid}"></div>`);
+        $(run[0]).before($grid);
+        for (const el of run) $grid.append(el);
+      }
+      run = [];
+    };
+    $body.children().each((_, el) => {
+      if ($(el).is("aside.callout.has-title") && $(el).find("img").length) run.push(el);
+      else flush();
+    });
+    flush();
+  }
+
   // Marqueurs invisibles sur les titres du sommaire (pour retrouver leur numéro de page)
   for (let l = 2; l <= ctx.tocDepth; l++) {
     $body.find(`h${l}[id]`).each((_, h) => {
@@ -206,9 +274,11 @@ export function buildDocument(tree, theme, opts = {}) {
   const { root, pages, dir } = tree;
   const tocDepth = opts.tocDepth ?? 2;
   const ctx = { dir, pageIds: new Set(pages.map((p) => p.id)), hasMermaid: false, demoteHeadings: opts.demoteHeadings !== false, tocDepth,
-    stripLinks: opts.toc !== false && opts.keepLinks !== true, hrPageBreak: opts.hrPageBreak !== false };
+    stripLinks: opts.toc !== false && opts.keepLinks !== true, hrPageBreak: opts.hrPageBreak !== false,
+    calloutGrid: theme.config.calloutGrid || 0 };
   const title = opts.title || root.title;
   const now = new Date();
+  const fileUrl = (f) => (f && fs.existsSync(f) ? pathToFileURL(path.resolve(f)).href : "");
   const vars = {
     title,
     subtitle: opts.subtitle || "",
@@ -217,10 +287,23 @@ export function buildDocument(tree, theme, opts = {}) {
     author: opts.author || "",
     date: now.toLocaleDateString(opts.locale || "fr-FR", { year: "numeric", month: "long", day: "numeric" }),
     year: now.getFullYear(),
-    coverImage: root.cover && fs.existsSync(path.join(dir, decodeHref(root.cover)))
-      ? pathToFileURL(path.join(dir, decodeHref(root.cover))).href : "",
-    coverBackdrop: (theme.config.coverBackdrop && fs.existsSync(path.join(theme.dir, theme.config.coverBackdrop)))
-      ? pathToFileURL(path.join(theme.dir, theme.config.coverBackdrop)).href : "",
+    coverImage: fileUrl(opts.coverImage) || (root.cover ? fileUrl(path.join(dir, decodeHref(root.cover))) : ""),
+    coverBackdrop: theme.config.coverBackdrop ? fileUrl(path.join(theme.dir, theme.config.coverBackdrop)) : "",
+    logo: fileUrl(opts.logo),
+  };
+
+  // Palette par section (thème) : d'abord les règles par mot-clé du titre, sinon la liste en boucle
+  // (sans répéter deux fois de suite la même couleur).
+  const palettes = theme.config.palettes || [];
+  const rules = (theme.config.paletteRules || []).map(([re, p]) => [new RegExp(re, "i"), p]);
+  let prevPalette = "", cycle = 0, num = 0;
+  const paletteOf = (t) => {
+    let p = rules.find(([re]) => re.test(t))?.[1];
+    if (!p && palettes.length) {
+      p = palettes[cycle++ % palettes.length];
+      if (p === prevPalette && palettes.length > 1) p = palettes[cycle++ % palettes.length];
+    }
+    return (prevPalette = p || "");
   };
 
   // Sections
@@ -228,13 +311,15 @@ export function buildDocument(tree, theme, opts = {}) {
   const sectionHtml = pages.map((page) => {
     const body = cleanBody(page, ctx);
     const headings = collectHeadings(body, tocDepth);
-    sections.push({ id: page.id, title: page.title, depth: page.depth, headings });
+    const palette = paletteOf(page.title);
+    const n = page.depth > 0 ? String(++num).padStart(2, "0") : "";
+    sections.push({ id: page.id, title: page.title, depth: page.depth, headings, palette, num: n });
     const cover = page.depth > 0 && page.cover && fs.existsSync(path.join(dir, decodeHref(page.cover)))
       ? `<img class="section-cover" src="${pathToFileURL(path.join(dir, decodeHref(page.cover))).href}" alt="">` : "";
     const desc = page.description ? `<p class="page-description">${esc(page.description)}</p>` : "";
     const icon = page.icon ? `<span class="page-icon">${esc(page.icon)}</span>` : "";
     return `
-<section class="page depth-${page.depth}" id="page-${page.id}" data-title="${esc(page.title)}">
+<section class="page depth-${page.depth}" id="page-${page.id}" data-title="${esc(page.title)}" data-palette="${esc(palette)}" data-num="${n}">
   <header class="page-header">${cover}<span class="pg-marker">pg:${page.id}</span>${icon}<h1 class="page-title">${esc(page.title)}</h1>${desc}</header>
   <div class="page-body">${body}</div>
 </section>`;
@@ -246,7 +331,7 @@ export function buildDocument(tree, theme, opts = {}) {
     const items = [];
     for (const s of sections) {
       if (s.depth === 0 && opts.tocIncludeRoot === false) continue;
-      items.push(`<li class="toc-page toc-depth-${s.depth}"><a href="#page-${s.id}"><span class="toc-title">${esc(s.title)}</span><span class="toc-num" data-target="${s.id}"></span></a>`);
+      items.push(`<li class="toc-page toc-depth-${s.depth}" data-palette="${esc(s.palette)}" data-num="${s.num}"><a href="#page-${s.id}"><span class="toc-title">${esc(s.title)}</span><span class="toc-num" data-target="${s.id}"></span></a>`);
       if (s.headings.length) {
         items.push(`<ul>${s.headings.map((h) => `<li class="toc-h toc-h${h.level}"><a href="#${esc(h.id)}"><span class="toc-title">${esc(h.title)}</span><span class="toc-num" data-heading="${esc(h.id)}"></span></a></li>`).join("")}</ul>`);
       }
@@ -265,7 +350,8 @@ export function buildDocument(tree, theme, opts = {}) {
   window.__mermaidDone = false;
   document.addEventListener("DOMContentLoaded", async () => {
     try {
-      mermaid.initialize({ startOnLoad: false, theme: ${JSON.stringify(theme.config.mermaidTheme || "neutral")}, securityLevel: "loose" });
+      mermaid.initialize({ startOnLoad: false, theme: ${JSON.stringify(theme.config.mermaidTheme || "neutral")}, securityLevel: "loose",
+        ...${JSON.stringify(theme.config.mermaidConfig || {})} });
       await mermaid.run({ querySelector: ".mermaid" });
     } catch (e) { console.error("mermaid", e); }
     window.__mermaidDone = true;
@@ -297,7 +383,42 @@ ${tocHtml}
 ${sectionHtml.join("\n")}
 </body></html>`;
 
-  return { coverHtml, bodyHtml, hasMermaid: ctx.hasMermaid, sections, vars };
+  // Décor de page (themes/<x>/page.html, optionnel) : une page pleine par variante, glissée sous chaque
+  // page du corps à l'assemblage. Deux variantes par section : "opener" (1re page) et "running" (suite).
+  // Avec "layerBackgrounds": true (theme.json), le fond est rendu à part, une fois par palette et par
+  // sorte de page ({{background}} vrai), et partagé par toutes les sections de cette couleur ; les variantes
+  // de section ({{band}} vrai) ne portent alors que ce qui leur est propre (titre…). PDF bien plus léger.
+  let layers = null;
+  if (theme.pageTemplate) {
+    const variants = [];
+    const shared = !!theme.config.layerBackgrounds;
+    const bgOf = {};
+    const add = (key, s) => {
+      for (const kind of ["opener", "running"]) {
+        if (shared) {
+          const bg = `bg:${s.palette}:${kind}`;
+          (bgOf[key] ||= {})[kind] = bg;
+          if (!variants.some((v) => v.key === bg)) variants.push({ key: bg, kind, background: true, palette: s.palette, title: "", num: "" });
+        }
+        variants.push({ key: `${key}:${kind}`, kind, band: true, background: !shared, ...s });
+      }
+    };
+    if (tocHtml) add("toc", { title: opts.tocTitle || theme.config.tocTitle || "Sommaire", palette: theme.config.tocPalette || palettes[0] || "", num: "" });
+    for (const s of sections) add(s.id, { title: s.title, palette: s.palette, num: s.num });
+    layers = {
+      keys: variants.map((v) => v.key),
+      bgOf,
+      html: `${head()}
+<body class="layers-body theme-${esc(theme.name)}">
+${variants.map((v) => `<div class="layer layer-${v.kind}" data-palette="${esc(v.palette)}">${renderTemplate(theme.pageTemplate, {
+    ...vars, docTitle: esc(title), kind: v.kind, opener: v.kind === "opener", running: v.kind === "running",
+    background: v.background, band: v.band, title: esc(v.title), palette: v.palette, num: v.num,
+  })}</div>`).join("\n")}
+</body></html>`,
+    };
+  }
+
+  return { coverHtml, bodyHtml, layers, hasMermaid: ctx.hasMermaid, sections, vars };
 }
 
 /** Injecte les numéros de page dans le sommaire (2e passe) */

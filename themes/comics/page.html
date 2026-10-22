@@ -1,0 +1,59 @@
+<!-- Décor d'une page (glissé sous le contenu) : papier crème pleine page, bandeau noir à bords nets accroché
+     au coin haut gauche (en-tête des écrans du jeu).
+     1re page d'un chapitre ({{opener}}) : le haut de la page devient un écran de menu (couleur du chapitre,
+     rayons, trame, coupe en biais) sous un grand bandeau titre. Pages suivantes ({{running}}) : sobres.
+     {{background}} : partagé par palette et sorte de page ; {{band}} : propre à la section.
+     Rayons et trame sont des SVG générés au chargement (vectoriels : un masque CSS serait rastérisé). -->
+{{#if background}}
+<div class="lyr-paper"></div>
+<svg class="lyr-svg lyr-paper-dots" viewBox="0 0 210 297" preserveAspectRatio="none"></svg>
+{{#if opener}}
+<div class="lyr-hero">
+  <div class="lyr-hero-fill"></div>
+  <svg class="lyr-svg lyr-rays" viewBox="0 0 210 50" preserveAspectRatio="none"></svg>
+  <svg class="lyr-svg lyr-dots" viewBox="0 0 210 50" preserveAspectRatio="none"></svg>
+</div>
+{{/if}}
+{{/if}}
+{{#if band}}
+<div class="lyr-band">
+  <div class="lyr-plate">
+    {{#if num}}<span class="lyr-num">{{num}}</span>{{/if}}
+    <span class="lyr-title">{{title}}</span>
+  </div>
+</div>
+<div class="lyr-foot"><span class="lyr-doc">{{docTitle}}</span>{{#if version}}<span class="lyr-ver">{{version}}</span>{{/if}}</div>
+{{/if}}
+<script>
+if (!window.__lyr) {
+  window.__lyr = true;
+  document.addEventListener("DOMContentLoaded", () => {
+    const f = (n) => n.toFixed(1);
+    // rayons "sunburst" depuis le haut droit du bandeau couleur (unités : mm, zone 210 x 50)
+    const cx = 168, cy = 6, R = 260;
+    let rays = "";
+    for (let a = 0; a < 360; a += 10) {
+      const a0 = (a * Math.PI) / 180, a1 = ((a + 3.5) * Math.PI) / 180;
+      rays += `M${cx} ${cy}L${f(cx + R * Math.cos(a0))} ${f(cy + R * Math.sin(a0))}L${f(cx + R * Math.cos(a1))} ${f(cy + R * Math.sin(a1))}Z`;
+    }
+    // trame halftone du bandeau couleur : points plus gros vers le bas gauche
+    let dots = "";
+    for (let y = 1.5; y < 50; y += 3) for (let x = 1.5; x < 210; x += 3) {
+      const t = Math.max(0, 1 - Math.hypot(x * 0.6, 50 - y) / 75);
+      const r = 1.05 * Math.pow(t, 0.9);
+      if (r > 0.2) dots += `<circle cx="${f(x)}" cy="${f(y)}" r="${r.toFixed(2)}"/>`;
+    }
+    // trame légère du papier : coin bas droit de la page
+    let pdots = "";
+    for (let y = 1.3; y < 297; y += 2.6) for (let x = 1.3; x < 210; x += 2.6) {
+      const t = Math.max(0, 1 - Math.hypot(210 - x, 297 - y) / 62);
+      const r = 0.5 * Math.pow(t, 0.8);
+      if (r > 0.14) pdots += `<circle cx="${f(x)}" cy="${f(y)}" r="${r.toFixed(2)}"/>`;
+    }
+    const put = (sel, svg) => document.querySelectorAll(sel).forEach((s) => { s.innerHTML = svg; });
+    put(".lyr-rays", `<path d="${rays}"/>`);
+    put(".lyr-dots", dots);
+    put(".lyr-paper-dots", pdots);
+  });
+}
+</script>

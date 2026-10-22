@@ -1,165 +1,450 @@
-/* comics — la DA du site Absolute Sumo transposée au GDD.
-   Bande claire du site (bleu lavande), Bangers pour les titres (sticker crème : contour encre + ombre dure),
-   Fredoka pour le texte, cadres épais à ombre décalée, accent qui change à chaque section. */
+/* comics — la DA du jeu Absolute Sumo (menus du jeu + site / presskit) transposée au GDD.
+   Chaque page est un écran de menu : fond saturé de la couleur de la section (rayons, streaks, trame),
+   grand panneau papier à contour encre + liseré blanc + ombre dure, bandeau noir "pinceau" avec le titre
+   (dessinés par page.html, glissé sous le contenu). Titres Lilita One (titres du jeu), Bangers en accent,
+   texte Fredoka. Étiquettes en parallélogramme, cartes à bandeau dégradé, tags noirs façon "WINTERFALL". */
 :root {
-  --paper: #c4cdef;         /* fond uni (bande claire du site) */
-  --ink-line: #0a0e24;      /* encre cosmos : contours + ombres */
-  --indigo: #191f4a;        /* panneaux */
-  --indigo-2: #232a63;
-  --gold: #ffc42e;
-  --cyan: #57c8ff;
-  --orange: #ff6a2b;
-  --red: #ff4560;
-  --blue: #3f7bff;
+  --ink-line: #0c0c16;      /* encre : contours, ombres, bandeaux */
+  --night: #0b0b14;
+  --paper: #fbf5e8;         /* papier du panneau (fond du contenu) */
+  --card: #ffffff;          /* cartes, tableaux, cadres posés sur le papier */
+  --card-alt: #fbf6ec;      /* lignes paires de tableau */
+  --gold: #ffd23a;
   --cream: #fdf6ea;
 
-  --ink: #2b3054;          /* texte principal (AA sur carte et sur page) */
-  --ink-soft: #414872;
-  --muted: #5b6291;
-  --accent: var(--gold);
+  --ink: #2b2840;           /* texte courant (papier des cartes du site) */
+  --ink-soft: #4a4560;
+  --muted: #6e6884;
+  --accent: var(--tile);
   --accent-ink: var(--ink-line);
-  --rule: #b7c0e6;
-  --card: #f6f7fd;         /* fond UNIQUE de tous les cadres (callouts, cartes, tableaux, citations) */
-  --card-alt: #eceffb;     /* lignes paires de tableau */
-  --surface: #d6ddf7;
-  --code-bg: #e7ebfb;
+  --rule: #e6dcc7;
+  --surface: #f3ead6;
+  --code-bg: #f1e7d2;
 
   --font-body: "Fredoka", "Segoe UI", system-ui, sans-serif;
-  --font-display: "Bangers", Impact, "Arial Black", sans-serif;
-  --fs-body: 10.5pt;
-  --lh-body: 1.6;
-  --fs-h1: 34pt;
-  --fs-h2: 19pt;
-  --fs-h3: 14pt;
-  --fs-h4: 11.5pt;
-  --radius: 3px;
+  --font-display: "LilitaOne", "Bangers", Impact, "Arial Black", sans-serif;
+  --font-comic: "Bangers", Impact, "Arial Black", sans-serif;
+  --fs-body: 10pt;
+  --lh-body: 1.55;
+  --fs-h1: 30pt;
+  --fs-h2: 15pt;
+  --fs-h3: 12.5pt;
+  --fs-h4: 9.5pt;
+  --radius: 2px;
   --img-radius: 0;
+  --space: 0.8em;
 
-  /* couleurs Notion adaptées au fond sombre */
-  --c-gray: #5f668c; --c-brown: #8a5a3c; --c-orange: #d8551a; --c-yellow: #b07d0a;
-  --c-green: #2f7d4b; --c-blue: #2a4fc7; --c-purple: #7a4fc4; --c-pink: #c2397e; --c-red: #d92c46;
-  --bg-gray: #d6ddf7; --bg-brown: #e6d9d3; --bg-orange: #f6ddcc; --bg-yellow: #f6ebc3;
-  --bg-green: #d6ecdb; --bg-blue: #d0e2f8; --bg-purple: #e2daf5; --bg-pink: #f3d8e6; --bg-red: #f5d2d7;
+  /* tuile par défaut (or) : remplacée par la palette de la section */
+  --tile-l: #fff3a8; --tile: #ffd23a; --tile-d: #f2a516; --tile-soft: #fff1c2;
+
+  /* couleurs Notion adaptées au papier crème */
+  --c-gray: #6e6884; --c-brown: #8a5a3c; --c-orange: #d0560f; --c-yellow: #a87405;
+  --c-green: #22804a; --c-blue: #1d4fd0; --c-purple: #7442c8; --c-pink: #c2337e; --c-red: #d32a45;
+  --bg-gray: #efe7d6; --bg-brown: #ecdccd; --bg-orange: #ffe2c7; --bg-yellow: #fff0b8;
+  --bg-green: #d9f2d6; --bg-blue: #d8eaff; --bg-purple: #e9ddff; --bg-pink: #ffdcef; --bg-red: #ffd9df;
 }
 
-/* accent cyclé par section, comme les bandes du site (or, cyan, orange, rouge, bleu) */
-section.page:nth-of-type(5n+1) { --accent: var(--gold); }
-section.page:nth-of-type(5n+2) { --accent: var(--cyan); }
-section.page:nth-of-type(5n+3) { --accent: var(--orange); }
-section.page:nth-of-type(5n+4) { --accent: var(--red); }
-section.page:nth-of-type(5n+5) { --accent: var(--blue); }
+/* ===================== PALETTES (couleurs des menus du jeu) =====================
+   --bg-1/2/3 : fond de page (dégradé radial), --rays / --dots : rayons et trame,
+   --tile-l/--tile/--tile-d : tuiles (étiquettes de titre, bandeaux de carte), --tile-soft : aplats clairs */
+[data-palette="blue"]    { --bg-1: #3d82f2; --bg-2: #1c46ad; --bg-3: #0d2268; --rays: rgba(160, 210, 255, 0.20); --dots: rgba(0, 0, 40, 0.34);
+                           --tile-l: #8fd0ff; --tile: #2c7cf2; --tile-d: #1646b8; --tile-soft: #dcebff; }
+[data-palette="orange"]  { --bg-1: #f0a456; --bg-2: #bf6420; --bg-3: #6e300a; --rays: rgba(255, 220, 160, 0.20); --dots: rgba(60, 20, 0, 0.32);
+                           --tile-l: #ffc15a; --tile: #f2760f; --tile-d: #c24a03; --tile-soft: #ffe6c9; }
+[data-palette="magenta"] { --bg-1: #d63cc0; --bg-2: #8a1488; --bg-3: #4a0858; --rays: rgba(255, 180, 245, 0.18); --dots: rgba(40, 0, 40, 0.32);
+                           --tile-l: #ff9fca; --tile: #e43a87; --tile-d: #a3134f; --tile-soft: #ffdcef; }
+[data-palette="teal"]    { --bg-1: #5ee0cc; --bg-2: #16a593; --bg-3: #075a5a; --rays: rgba(255, 255, 255, 0.22); --dots: rgba(0, 50, 50, 0.32);
+                           --tile-l: #8af0dc; --tile: #17b5a3; --tile-d: #0b7c78; --tile-soft: #d2f6ef; }
+[data-palette="purple"]  { --bg-1: #8d58e0; --bg-2: #5a2aa6; --bg-3: #30126a; --rays: rgba(210, 180, 255, 0.16); --dots: rgba(20, 0, 50, 0.34);
+                           --tile-l: #c9a8ff; --tile: #8a55e8; --tile-d: #5a2aa6; --tile-soft: #ebe0ff; }
+[data-palette="gold"]    { --bg-1: #ffd84a; --bg-2: #eea214; --bg-3: #a35f06; --rays: rgba(255, 255, 255, 0.26); --dots: rgba(80, 40, 0, 0.30);
+                           --tile-l: #fff3a8; --tile: #ffd23a; --tile-d: #f2a516; --tile-soft: #fff1c2; }
+[data-palette="green"]   { --bg-1: #62d884; --bg-2: #27a04a; --bg-3: #0f5a26; --rays: rgba(220, 255, 220, 0.20); --dots: rgba(0, 40, 10, 0.32);
+                           --tile-l: #b6f5a4; --tile: #3fc45a; --tile-d: #1d7a35; --tile-soft: #dcf7d6; }
+[data-palette="red"]     { --bg-1: #ff7086; --bg-2: #d42c4c; --bg-3: #7c0c22; --rays: rgba(255, 210, 220, 0.20); --dots: rgba(50, 0, 10, 0.32);
+                           --tile-l: #ffa3b2; --tile: #ff4560; --tile-d: #b81d3a; --tile-soft: #ffdde3; }
+[data-palette="pink"]    { --bg-1: #ffb4dc; --bg-2: #e85aa6; --bg-3: #9c1460; --rays: rgba(255, 255, 255, 0.26); --dots: rgba(110, 0, 55, 0.28);
+                           --tile-l: #ffc6e4; --tile: #ff7ab8; --tile-d: #d63a86; --tile-soft: #ffe3f1; }
+[data-palette="slate"]   { --bg-1: #5a6889; --bg-2: #353f5c; --bg-3: #1c2236; --rays: rgba(210, 220, 255, 0.08); --dots: rgba(200, 210, 240, 0.12);
+                           --tile-l: #c3cbe0; --tile: #6b7796; --tile-d: #3c4663; --tile-soft: #e4e8f2; }
+[data-palette="night"]   { --bg-1: #262c66; --bg-2: #14173f; --bg-3: #08091d; --rays: rgba(120, 150, 255, 0.07); --dots: rgba(120, 140, 255, 0.14);
+                           --tile-l: #fff3a8; --tile: #ffd23a; --tile-d: #f2a516; --tile-soft: #fff1c2; }
 
+/* ===================== DÉCOR DE PAGE (page.html) =====================
+   Page papier pleine (le contenu a toute la place), bandeau noir à bords nets accroché au coin haut
+   gauche. Seule la 1re page d'un chapitre a un haut de page "écran de menu" en couleur. */
+.layer { font-family: var(--font-body); }
+.lyr-paper { position: absolute; inset: 0; background: var(--paper); }
+.lyr-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.lyr-svg path, .lyr-svg circle { fill: currentColor; }
+.lyr-paper-dots { color: rgba(60, 30, 0, 0.07); }
+
+/* 1re page : haut de page en couleur (rayons + trame), coupé en biais avec liseré blanc et trait encre */
+.lyr-hero {
+  --cut: polygon(0 0, 100% 0, 100% 72%, 0 100%);
+  position: absolute; left: 0; right: 0; top: 0; height: 42mm;
+  background: var(--ink-line); clip-path: var(--cut);
+}
+.lyr-hero::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0.8mm;
+  background: #fff; clip-path: var(--cut);
+}
+.lyr-hero-fill, .lyr-hero .lyr-svg {
+  position: absolute; left: 0; top: 0; width: 100%; height: calc(100% - 2mm); clip-path: var(--cut);
+}
+.lyr-hero-fill {
+  background:
+    linear-gradient(118deg, transparent 0 22%, rgba(255, 255, 255, 0.1) 22% 31%, transparent 31% 64%,
+      rgba(255, 255, 255, 0.08) 64% 69%, transparent 69%),
+    radial-gradient(ellipse 70% 120% at 80% 10%, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+}
+.lyr-rays { color: var(--rays); }
+.lyr-dots { color: var(--dots); }
+
+/* bandeau noir (en-tête des écrans du jeu : MODE SELECT, SETTINGS…), accroché au coin :
+   bas droit, bord droit en biais, rien d'autre */
+.lyr-band { position: absolute; left: 0; top: 0; display: flex; }
+.lyr-plate {
+  position: relative; isolation: isolate; flex: none; max-width: 185mm;
+  display: flex; align-items: center; gap: 2.6mm;
+  padding: 3.6mm 12mm 3.6mm 16mm;
+  color: #fff;
+}
+.lyr-plate::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: var(--ink-line);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 6mm) 100%, 0 100%);
+}
+.lyr-title {
+  position: relative; display: block; white-space: nowrap; overflow: hidden; max-width: 150mm;
+  font-family: var(--font-display); font-weight: 400; font-size: 11pt; line-height: 1.15;
+  letter-spacing: 0.02em; text-transform: uppercase; color: #fff;
+  --fit-min: 11px;
+}
+/* numéro du chapitre : tuile de sa couleur, liseré blanc (ressort sur l'encre) */
+.lyr-num {
+  position: relative; flex: none;
+  font-family: var(--font-display); font-size: 9pt; line-height: 1; letter-spacing: 0.02em; color: #fff;
+  -webkit-text-stroke: 2.4px var(--ink-line); paint-order: stroke fill;
+  padding: 0.9mm 2mm 0.8mm;
+  background: linear-gradient(110deg, var(--tile-l) 0%, var(--tile) 45%, var(--tile-d) 100%);
+  border: 0.45mm solid #fff;
+  transform: skewX(-10deg);
+}
+/* 1re page d'un chapitre : grand bandeau titre, posé sur le haut de page en couleur */
+.layer-opener .lyr-plate { padding: 6.5mm 20mm 6.5mm 16mm; gap: 4mm; }
+.layer-opener .lyr-plate::before { clip-path: polygon(0 0, 100% 0, calc(100% - 10mm) 100%, 0 100%); }
+.layer-opener .lyr-title { font-size: 27pt; max-width: 150mm; --fit-min: 20px; }
+.layer-opener .lyr-num { font-size: 17pt; padding: 1.3mm 3mm 1.1mm; border-width: 0.65mm; -webkit-text-stroke: 4.2px var(--ink-line); }
+
+/* pied de page : titre du document + version (le numéro de page est dans footerTemplate) */
+.lyr-foot {
+  position: absolute; left: 16mm; bottom: 7.6mm; display: flex; align-items: center; gap: 2.2mm;
+  font-family: var(--font-display); font-size: 7.5pt; line-height: 1; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.lyr-ver {
+  font-size: 6.5pt; padding: 0.6mm 1.6mm 0.5mm; color: var(--ink-line);
+  background: linear-gradient(110deg, #fff3a8 0%, #ffd23a 45%, #f2a516 100%);
+  border: 0.4mm solid var(--ink-line); transform: skewX(-10deg);
+}
+
+/* ===================== CORPS ===================== */
+/* le panneau papier est peint par le décor : le document reste transparent */
+html, body.doc-body { background: transparent; }
 body { font-weight: 400; }
-.doc-body { background: #c4cdef; }
 strong { font-weight: 600; color: var(--ink-line); }
-a { color: #243fb0; }
+a { color: #1d4fd0; }
 
-/* ---- titres sticker ---- */
-.page-title, h2, h3, .toc-heading, .cover-title {
-  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.03em;
-  color: var(--cream); paint-order: stroke fill;
-}
-.page-header { margin-bottom: 2em; padding-top: 2mm; }
-.page-title {
-  display: inline-block;
-  -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line);
-  line-height: 1;
-}
-.page-title::after {
-  content: ""; display: block; width: 3em; height: 7px; margin-top: 0.35em;
-  background: var(--accent); border: 2px solid var(--ink-line); border-radius: var(--radius);
-}
-h2 { -webkit-text-stroke: 1.6px var(--ink-line); text-shadow: 3px 3px 0 var(--ink-line); margin-top: 1.8em; }
-h3 { -webkit-text-stroke: 1.2px var(--ink-line); text-shadow: 2px 2px 0 var(--ink-line); }
-h4 { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 9pt; color: var(--ink-line); }
-.page-description { color: var(--ink-soft); font-weight: 500; }
+/* en-tête de section : le titre est dessiné dans le grand bandeau noir du décor,
+   on ne garde ici que sa place (le h1 reste dans le document pour la structure) */
+.page-header { margin: 0 0 6mm; min-height: 23mm; }
+.page-title { visibility: hidden; height: 0; overflow: hidden; }
+.page-icon { display: none; }
+.page-description { color: var(--ink-soft); font-weight: 500; font-size: 11pt; }
+.section-cover { height: 42mm; border: 0.8mm solid var(--ink-line); box-shadow: 1.4mm 1.6mm 0 var(--ink-line); }
 
-/* ---- cadres comic : TOUS le même fond clair (--card), contour encre, ombre dure ---- */
-figure.image img { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
-figure.image { margin-bottom: calc(var(--space) + 5px); }
+/* H2 = étiquette en parallélogramme (dégradé de la palette + trame), puis un trait encre jusqu'au bord
+   (les "DISPLAY ———" des réglages du jeu) */
+h2 {
+  display: flex; align-items: center; gap: 3.2mm;
+  font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h2); line-height: 1.05;
+  letter-spacing: 0.02em; text-transform: uppercase; color: #fff;
+  margin: 8mm 0 4.2mm;
+}
+h2::after { content: ""; flex: 1 1 auto; min-width: 8mm; height: 0.75mm; background: var(--ink-line); }
+h2 .h-text {
+  position: relative; isolation: isolate; flex: 0 1 auto;
+  padding: 1.7mm 4.6mm 1.5mm 4mm; margin-left: 1mm;
+  -webkit-text-stroke: 3.6px var(--ink-line); paint-order: stroke fill;
+  text-shadow: 0.6px 1.2px 0 var(--ink-line);
+}
+h2 .h-text::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; transform: skewX(-12deg);
+  background:
+    radial-gradient(circle, rgba(0, 0, 30, 0.2) 1.3px, transparent 1.8px) 0 0 / 6px 6px,
+    linear-gradient(110deg, var(--tile-l) 0%, var(--tile) 45%, var(--tile-d) 100%);
+  border: 0.65mm solid var(--ink-line);
+  box-shadow: 0.9mm 1mm 0 var(--ink-line);
+}
+.page-body > h2:first-child { margin-top: 1mm; }
 
-/* callouts = cartes (fiches persos, arènes, encadrés d'info) : fond clair + liseré d'accent à gauche */
+/* H3 = titre encre précédé d'un losange de la palette (puces du presskit) */
+h3 {
+  display: flex; align-items: center; gap: 2.4mm;
+  font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h3); line-height: 1.15;
+  letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-line);
+  margin: 5mm 0 2.4mm;
+}
+h3::before {
+  content: ""; flex: none; width: 2.5mm; height: 2.5mm; margin-left: 0.6mm;
+  background: var(--tile); border: 0.55mm solid var(--ink-line); transform: rotate(45deg);
+}
+
+/* H4 = tag noir incliné (les étiquettes "WINTERFALL" / "RESOLUTION" du jeu) ;
+   posé juste au-dessus d'une image, il s'accroche au cadre comme un onglet */
+h4 {
+  position: relative; isolation: isolate; width: fit-content; max-width: 100%;
+  font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h4); line-height: 1.1;
+  letter-spacing: 0.05em; text-transform: uppercase; color: #fff;
+  margin: 6mm 0 2.2mm 1.2mm; padding: 1.3mm 4.2mm 1.1mm 3.4mm;
+}
+h4::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--ink-line); transform: skewX(-12deg); }
+/* texte des étiquettes toujours blanc, même en gras, en lien ou coloré dans Notion (sinon noir / bleu sur l'encre) */
+h2 .h-text *, h4 .h-text * { color: inherit !important; background: none; font-weight: inherit; text-decoration: none; }
+h4:has(+ figure.image) { margin-bottom: 0; margin-left: 3mm; }
+h4 + figure.image img { margin-left: 0; }
+
+.page-description, p, li { color: var(--ink); }
+p { margin-bottom: 2.6mm; }
+
+/* listes : puces losange encre + couleur de la palette */
+ul.bulleted-list { list-style: none; padding-left: 5.4mm; }
+ul.bulleted-list > li { position: relative; }
+ul.bulleted-list > li::before {
+  content: ""; position: absolute; left: -4.4mm; top: 0.5em; width: 1.7mm; height: 1.7mm;
+  background: var(--tile); border: 0.45mm solid var(--ink-line); transform: rotate(45deg);
+}
+ul.bulleted-list ul.bulleted-list > li::before { background: #fff; }
+li { margin: 0.6mm 0; }
+/* une courte liste ne se coupe pas (elle suit son titre à la page suivante) */
+ul.bulleted-list:not(:has(> li:nth-child(7))), ol.numbered-list:not(:has(> li:nth-child(7))) { break-inside: avoid; }
+ol.numbered-list li::marker { font-family: var(--font-display); color: var(--ink-line); }
+
+/* ===================== CADRES ===================== */
+/* images : contour encre + liseré blanc + ombre dure (captures du presskit) */
+figure.image { text-align: center; margin-bottom: 5.5mm; }
+figure.image img {
+  margin: 0 auto; border: 0.8mm solid var(--ink-line); padding: 0.55mm; background: #fff;
+  box-shadow: 1.2mm 1.4mm 0 var(--ink-line); max-height: 100mm;
+}
+/* le texte qui présente une image reste avec elle (pas de légende en bas de page et l'image seule après) */
+p:has(+ figure.image), p:has(+ .column-list figure.image) { break-after: avoid; page-break-after: avoid; }
+.column figure.image img, .card-grid figure.image img { max-height: 120mm; }
+
+/* callouts = cartes blanches à contour encre ; si le 1er paragraphe est en gras, il devient
+   le bandeau de la carte (dégradé de tuile + trame, texte blanc contouré : cartes "How it plays") */
 aside.callout, aside.callout[class*="_background"] {
   background: var(--card); color: var(--ink);
-  border: 3px solid var(--ink-line); border-left-width: 7px; border-left-color: var(--accent);
-  border-radius: var(--radius); box-shadow: 5px 5px 0 var(--ink-line);
-  margin-bottom: calc(var(--space) + 6px);
+  border: 0.75mm solid var(--ink-line); border-radius: var(--radius);
+  box-shadow: 1.2mm 1.4mm 0 var(--ink-line);
+  padding: 3mm 3.8mm; margin-bottom: 6mm;
 }
+aside.callout > .icon { display: none; }
+aside.callout p { margin-bottom: 1.2mm; }
+aside.callout.has-title { padding-top: 0; }
+aside.callout .callout-title {
+  margin: 0 -3.8mm 2.6mm; padding: 2mm 3.8mm 1.8mm;
+  font-family: var(--font-display); font-weight: 400; font-size: 11.5pt; line-height: 1.12;
+  letter-spacing: 0.02em; text-transform: uppercase; color: #fff;
+  -webkit-text-stroke: 3.2px var(--ink-line); paint-order: stroke fill; text-shadow: 0.5px 1px 0 var(--ink-line);
+  background:
+    radial-gradient(circle, rgba(0, 0, 30, 0.18) 1.3px, transparent 1.8px) 0 0 / 6px 6px,
+    linear-gradient(110deg, var(--tile-l) 0%, var(--tile) 45%, var(--tile-d) 100%);
+  border-bottom: 0.75mm solid var(--ink-line);
+}
+aside.callout .callout-title strong { color: inherit; font-weight: 400; }
 aside.callout strong { color: var(--ink-line); }
-aside.callout a { color: #243fb0; }
-aside.callout figure.image img { box-shadow: none; border-width: 2px; }
-aside.callout > .icon { filter: none; }
-/* Cartes en grille (fiches persos, arènes) : cadre IDENTIQUE pour toutes (pas de liseré d'accent
-   asymétrique selon la colonne). Le liseré d'accent reste sur les encadrés d'info autonomes. */
-.card-grid aside.callout, .card-grid aside.callout[class*="_background"] {
-  border: 3px solid var(--ink-line);
-}
+aside.callout figure.image { margin: 2.4mm 0 0; }
+aside.callout figure.image img { border-width: 0.55mm; padding: 0; box-shadow: none; }
+aside.callout .column-list { gap: 2.4mm; }
+/* cartes côte à côte (une par colonne) : même hauteur sur la rangée */
+.column-list { align-items: stretch; }
+.column { display: flex; flex-direction: column; }
+.column > aside.callout:last-child { flex: 1 0 auto; }
+/* grilles de cartes (fiches persos, arènes, piliers) : une seule couleur, celle du chapitre */
+.card-grid { gap: 6mm 5.5mm; align-items: stretch; }
 
-blockquote, blockquote[class*="_background"] {
-  background: var(--card); color: var(--ink);
-  border: 3px solid var(--ink-line); border-left: 7px solid var(--accent);
-  border-radius: var(--radius); padding: 0.7em 1em; font-weight: 500;
-  box-shadow: 5px 5px 0 var(--ink-line);
+/* citations = carte "quête" du jeu : dégradé clair, contour encre + liseré blanc, trame dans le coin */
+blockquote, blockquote[class] {
+  position: relative; isolation: isolate;
+  margin: 0 0 6mm; padding: 3.4mm 4.6mm 3.4mm; border-radius: var(--radius);
+  color: var(--ink-line); font-weight: 500; font-size: 10.5pt; line-height: 1.5;
+  border: 0.75mm solid var(--ink-line);
+  background: linear-gradient(110deg, #fffbe2 0%, #ffeba6 55%, #ffd970 100%);
+  box-shadow: inset 0 0 0 0.7mm #fff, 1.3mm 1.5mm 0 var(--ink-line);
 }
+blockquote::after {
+  content: ""; position: absolute; inset: 0.7mm; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(80, 40, 0, 0.16) 1.4px, transparent 1.9px);
+  background-size: 7px 7px;
+  -webkit-mask-image: linear-gradient(150deg, transparent 55%, #000 100%);
+  mask-image: linear-gradient(150deg, transparent 55%, #000 100%);
+}
+blockquote > strong:first-child { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase; }
+blockquote.block-color-blue_background, blockquote.block-color-blue { background: linear-gradient(110deg, #f0f7ff 0%, #d3e8ff 55%, #a9d3ff 100%); }
+blockquote.block-color-blue_background::after { background-image: radial-gradient(circle, rgba(0, 30, 90, 0.14) 1.4px, transparent 1.9px); }
+blockquote.block-color-purple_background, blockquote.block-color-purple { background: linear-gradient(110deg, #f6f0ff 0%, #e3d4ff 55%, #cbb2ff 100%); }
+blockquote.block-color-purple_background::after { background-image: radial-gradient(circle, rgba(40, 0, 90, 0.14) 1.4px, transparent 1.9px); }
+blockquote.block-color-green_background { background: linear-gradient(110deg, #f1fff0 0%, #d4f6cf 55%, #b0eaa6 100%); }
+blockquote.block-color-pink_background { background: linear-gradient(110deg, #fff2f9 0%, #ffd9ec 55%, #ffb9dc 100%); }
+blockquote.block-color-red_background { background: linear-gradient(110deg, #fff2f4 0%, #ffd9df 55%, #ffb5c1 100%); }
+blockquote.block-color-gray_background, blockquote.block-color-default { background: var(--card); }
 
-/* code : même famille claire */
+/* tableaux : carte blanche, en-tête encre en Lilita (pastilles sombres du jeu), en-tête de ligne en aplat de la palette */
+table.simple-table, table.collection-content {
+  border: 0.75mm solid var(--ink-line); border-collapse: collapse; background: var(--card);
+  box-shadow: 1.2mm 1.4mm 0 var(--ink-line); margin-bottom: 6.5mm; font-size: 9.2pt; line-height: 1.45;
+}
+table.simple-table th, table.simple-table td, table.collection-content th, table.collection-content td {
+  border: 1px solid var(--rule); padding: 1.7mm 2.6mm; color: var(--ink);
+}
+table.simple-table thead th, table.collection-content thead th {
+  background: var(--ink-line); color: #fff; border-color: #34344a;
+  font-family: var(--font-display); font-weight: 400; font-size: 8.8pt; letter-spacing: 0.05em; text-transform: uppercase;
+}
+table.simple-table tbody th, table.collection-content tbody th {
+  background: var(--tile-soft); color: var(--ink-line);
+  font-family: var(--font-display); font-weight: 400; font-size: 8.8pt; letter-spacing: 0.04em; text-transform: uppercase;
+  border-right: 0.6mm solid var(--ink-line);
+}
+table.simple-table th strong { color: inherit; font-weight: 400; }
+table.simple-table tbody tr:nth-child(even) td { background: var(--card-alt); }
+table.simple-table td strong { color: var(--ink-line); }
+
+/* code, mermaid, bookmarks */
 pre.code {
-  background: var(--card); color: var(--ink);
-  border: 3px solid var(--ink-line); border-radius: var(--radius); box-shadow: 5px 5px 0 var(--ink-line);
+  background: #14173f; color: var(--cream);
+  border: 0.75mm solid var(--ink-line); border-radius: var(--radius); box-shadow: 1.2mm 1.4mm 0 var(--ink-line);
 }
-pre.code code { color: var(--ink); }
-code { background: var(--code-bg); color: var(--ink); border: 1px solid var(--rule); }
-
-/* tableaux : même carte claire, en-tête encre */
-table.simple-table { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); margin-bottom: calc(var(--space) + 6px); background: var(--card); }
-table.simple-table th, table.simple-table td { border-color: var(--rule); }
-table.simple-table th {
-  background: var(--ink-line); color: var(--cyan); font-weight: 700; font-size: 8pt;
-  letter-spacing: 0.1em; text-transform: uppercase;
+pre.code code { color: var(--cream); }
+code { background: var(--code-bg); color: var(--ink-line); border: 1px solid var(--rule); }
+.mermaid {
+  background: var(--card); border: 0.75mm solid var(--ink-line); box-shadow: 1.2mm 1.4mm 0 var(--ink-line);
+  padding: 5mm 4mm; margin-bottom: 6.5mm;
 }
-table.simple-table th strong { color: inherit; }
-table.simple-table td { background: var(--card); color: var(--ink); }
-table.simple-table tr:nth-child(even) td { background: var(--card-alt); }
-
-.checkbox { border: 2px solid var(--ink-line); border-radius: var(--radius); }
-.checkbox-on { background: var(--gold); border-color: var(--ink-line); }
+figure.bookmark { background: var(--card); border: 0.75mm solid var(--ink-line); box-shadow: 1.2mm 1.4mm 0 var(--ink-line); }
+.checkbox { border: 0.5mm solid var(--ink-line); border-radius: 1px; }
+.checkbox-on { background: var(--tile); border-color: var(--ink-line); }
 .checkbox-on::after { border-color: var(--ink-line); }
-ul.bulleted-list li::marker { color: var(--accent); }
-hr { border-top: 2px solid var(--ink-line); }
-p.link-to-page::before { color: var(--accent); }
-figure.bookmark { background: var(--card); border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
-.section-cover { border: 3px solid var(--ink-line); box-shadow: 5px 5px 0 var(--ink-line); }
+hr { border-top: 0.75mm solid var(--ink-line); }
+p.link-to-page::before { color: var(--tile-d); }
+mark[class*="highlight-"] { color: inherit; }
 
-/* ---- sommaire ---- */
-.toc-heading { display: inline-block; -webkit-text-stroke: 2.5px var(--ink-line); text-shadow: 4px 4px 0 var(--ink-line); margin-bottom: 1.4em; }
-.toc-list a::after { border-bottom-color: #8f9bd0; }
-.toc-page > a { font-family: var(--font-display); font-weight: 400; font-size: 13pt; letter-spacing: 0.03em; color: var(--ink-line); margin-top: 0.55em; }
-.toc-list .toc-num { color: var(--ink-line); font-weight: 700; }
-.toc-h a { color: var(--ink); font-weight: 500; }
-
-/* ---- couverture : key art plein cadre, liseré énergie, titre sticker ---- */
-.cover { display: flex; flex-direction: column; background: var(--paper); }
-.cover-image { flex: 0 0 60%; overflow: hidden; position: relative; background: var(--ink-line); }
-.cover-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-image::after { content: none; }
-.cover-edge {
-  height: 4px; margin: 0 -2px;
-  background: linear-gradient(90deg, transparent, var(--blue) 15%, var(--cyan) 40%, var(--gold) 60%, var(--orange) 82%, transparent);
+/* ===================== SOMMAIRE ===================== */
+.toc-heading { visibility: hidden; height: 0; overflow: hidden; margin: 0; }
+.toc { padding-top: 27mm; }
+.toc-list { counter-reset: chapter; }
+.toc-list a { color: var(--ink); align-items: center; }
+.toc-list a::after { border-bottom: 0.55mm dotted #c4b394; top: 0.1em; }
+.toc-page > a {
+  font-family: var(--font-display); font-weight: 400; font-size: 12.5pt; letter-spacing: 0.02em;
+  text-transform: uppercase; color: var(--ink-line); margin-top: 3.4mm; gap: 2.6mm;
 }
-.cover-text { flex: 1 1 auto; padding: 8mm 16mm 14mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.toc-page.toc-depth-1 { counter-increment: chapter; }
+.toc-page > a::before {
+  content: ""; flex: none; width: 2.6mm; height: 2.6mm; margin: 0 1.6mm 0 1mm;
+  background: var(--tile); border: 0.55mm solid var(--ink-line); transform: rotate(45deg);
+}
+.toc-page.toc-depth-1 > a::before {
+  content: counter(chapter, decimal-leading-zero); width: auto; height: auto; margin: 0 0.6mm 0 0.8mm;
+  font-size: 9.5pt; line-height: 1; color: #fff; -webkit-text-stroke: 2.4px var(--ink-line); paint-order: stroke fill;
+  padding: 0.9mm 1.8mm 0.8mm;
+  background: linear-gradient(110deg, var(--tile-l) 0%, var(--tile) 45%, var(--tile-d) 100%);
+  border: 0.5mm solid var(--ink-line); box-shadow: 0.5mm 0.6mm 0 var(--ink-line); transform: skewX(-10deg);
+}
+.toc-list .toc-num { color: var(--ink-line); font-family: var(--font-display); font-weight: 400; min-width: 2em; }
+.toc-h a { font-weight: 500; font-size: 9.6pt; color: var(--ink-soft); padding-left: 13.5mm; margin-top: 0.4mm; }
+.toc-h .toc-num { font-size: 9.6pt; }
+.toc-h3 a { padding-left: 18mm; }
+
+/* ===================== COUVERTURE ===================== */
+.cover-body, .cover-body .cover { background: var(--night); }
+.cover { position: relative; isolation: isolate; color: #fff; }
+/* fond nuit (dégradés seulement : un rayon conique ou un masque serait rastérisé) */
+.cover::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background:
+    linear-gradient(118deg, transparent 0 30%, rgba(120, 150, 255, 0.07) 30% 40%, transparent 40% 70%,
+      rgba(120, 150, 255, 0.05) 70% 75%, transparent 75%),
+    radial-gradient(ellipse 80% 45% at 50% 85%, #262c66 0%, #14173f 50%, #08091d 100%);
+}
+/* key art en case de manga : coupe en biais en bas, liseré blanc le long de la coupe */
+.cover-art {
+  position: absolute; left: 0; right: 0; top: 0; height: 86%;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 0 100%);
+}
+.cover-art img {
+  position: absolute; inset: 0 0 1.6mm 0; width: 100%; height: calc(100% - 1.6mm); object-fit: cover; object-position: center 35%;
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 0 100%);
+}
+.cover-veil {
+  position: absolute; left: 0; right: 0; top: 0; height: 86%;
+  background:
+    linear-gradient(180deg, rgba(9, 12, 34, 0.5) 0%, rgba(9, 12, 34, 0.12) 20%, transparent 36%),
+    linear-gradient(0deg, rgba(9, 12, 34, 0.55) 0%, transparent 26%);
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 0 100%);
+}
+.cover-top { position: absolute; left: 0; right: 0; top: 9mm; display: flex; flex-direction: column; align-items: center; }
+/* pas de filter (halo) : il ferait rastériser le logo une 2e fois, en plus gros */
+.cover-logo { width: 128mm; height: auto; }
 .cover-badge {
-  display: inline-flex; align-items: center; gap: 0.5em;
-  font-family: var(--font-body); font-weight: 700; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--ink-line); background: var(--gold); border: 2.5px solid var(--ink-line); border-radius: var(--radius);
-  padding: 0.35em 0.9em; transform: rotate(-1.5deg); box-shadow: 3px 3px 0 var(--ink-line); margin-bottom: 6mm;
+  margin-top: 2mm; font-family: var(--font-display); font-size: 11pt; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-line); padding: 1.2mm 3.6mm 1mm;
+  background: linear-gradient(110deg, #fff3a8 0%, #ffd23a 45%, #f2a516 100%);
+  border: 0.6mm solid var(--ink-line); box-shadow: 0.8mm 1mm 0 var(--ink-line); transform: rotate(-2deg);
 }
-.cover-badge::before { content: ""; width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--red); border: 1.5px solid var(--ink-line); }
-.cover-title {
-  font-size: 54pt; line-height: 0.95; margin: 0; max-width: 10em;
-  -webkit-text-stroke: 3px var(--ink-line); text-shadow: 6px 6px 0 var(--ink-line);
+.cover-bottom {
+  position: absolute; left: 12mm; right: 12mm; bottom: 11mm;
+  display: flex; flex-direction: column; align-items: center; gap: 7mm; text-align: center;
 }
-.cover-subtitle { font-family: var(--font-display); font-size: 18pt; color: var(--orange); letter-spacing: 0.04em; margin: 3mm 0 0; -webkit-text-stroke: 1.2px var(--ink-line); paint-order: stroke fill; text-shadow: 2px 2px 0 var(--ink-line); }
-.cover-description { color: var(--ink); font-weight: 500; margin: 5mm 0 0; max-width: 40em; }
-.cover-meta { margin-top: auto; display: flex; gap: 2em; align-items: center; justify-content: center; font-weight: 700; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
-.cover-version { color: var(--ink-line); background: var(--gold); border: 2px solid var(--ink-line); border-radius: var(--radius); padding: 0.2em 0.7em; box-shadow: 2px 2px 0 var(--ink-line); }
-.cover:not(:has(.cover-image)) .cover-text { padding-top: 50mm; }
+/* "GAME DESIGN DOCUMENT" comme le "PRESS KIT" du site : Bangers, remplissage or → orange,
+   contour encre, puis contour blanc épais avec ombre en extrusion (3 calques) */
+.cover-kicker {
+  position: relative; isolation: isolate; display: block; width: 100%;
+  white-space: nowrap; text-align: center;
+  font-family: var(--font-comic); font-weight: 400; font-size: 46pt; line-height: 1.15;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold);
+  --fit-min: 30px;
+}
+.cover-kicker::before, .cover-kicker::after {
+  content: attr(data-text); position: absolute; inset: 0; white-space: nowrap; pointer-events: none;
+}
+.cover-kicker::before {
+  z-index: -2; color: #fff; -webkit-text-stroke: 15px #fff;
+  filter: drop-shadow(0.8px 1px 0 var(--ink-line)) drop-shadow(0.8px 1px 0 var(--ink-line))
+    drop-shadow(0.8px 1px 0 var(--ink-line)) drop-shadow(0.8px 1px 0 var(--ink-line)) drop-shadow(0.8px 1px 0 var(--ink-line));
+}
+.cover-kicker::after { z-index: -1; color: var(--ink-line); -webkit-text-stroke: 7.5px var(--ink-line); }
+.cover-kicker-fill {
+  position: relative; z-index: 1; color: var(--gold);
+  background: linear-gradient(180deg, #ffe46a 0%, #ffc42e 48%, #ff6a2b 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.cover-description { margin: 0 auto; max-width: 150mm; color: #e6e9fb; font-weight: 500; font-size: 11pt; line-height: 1.5; }
+.cover-meta { display: flex; flex-wrap: wrap; gap: 4mm; justify-content: center; }
+.cover-tag {
+  position: relative; isolation: isolate; padding: 1.6mm 4.6mm 1.4mm;
+  font-family: var(--font-display); font-size: 10.5pt; line-height: 1; letter-spacing: 0.05em; text-transform: uppercase; color: #fff;
+}
+.cover-tag::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; transform: skewX(-12deg);
+  background: var(--ink-line); border: 0.55mm solid #fff;
+}
+.cover-version { color: #fff; -webkit-text-stroke: 3px var(--ink-line); paint-order: stroke fill; }
+.cover-version::before {
+  background: linear-gradient(110deg, #fff3a8 0%, #ffd23a 45%, #f2a516 100%);
+  border-color: var(--ink-line); box-shadow: 0.8mm 1mm 0 #fff;
+}
+/* sans logo : le titre du document prend toute la place */
+.cover:not(:has(.cover-logo)) .cover-kicker { font-size: 60pt; }

@@ -57,6 +57,10 @@ body {
 }
 .cover-body { background: var(--paper); }
 .cover-body .cover { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+/* décor de page (page.html) : une feuille par variante */
+.layers-body { background: transparent; }
+.layer { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.layer + .layer { break-before: page; page-break-before: always; }
 
 section.page { break-before: page; page-break-before: always; }
 section.page.depth-0 { break-before: auto; page-break-before: auto; }

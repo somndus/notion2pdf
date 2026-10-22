@@ -25,6 +25,9 @@ Options
       --subtitle <texte>   Sous-titre sur la couverture
       --version <texte>    Version affichée sur la couverture (ex : v0.4)
       --author <texte>     Auteur / studio (couverture + métadonnées PDF)
+      --logo <image>       Logo affiché sur la couverture (si le thème le prévoit)
+      --cover-image <image> Visuel de couverture (défaut : cover Notion de la page racine)
+      --max-pages <n>      Aperçu : n'imprime que les n premières pages (rapide pour régler un thème)
       --format <A4|Letter> Format de page          (défaut : celui du thème, sinon A4)
       --toc-depth <n>      Profondeur du sommaire : 1 = pages, 2 = + titres H1, 3 = + H2 (défaut : 2)
       --no-toc             Pas de sommaire
@@ -59,6 +62,9 @@ try {
       subtitle: { type: "string" },
       version: { type: "string" },
       author: { type: "string" },
+      logo: { type: "string" },
+      "cover-image": { type: "string" },
+      "max-pages": { type: "string" },
       format: { type: "string" },
       "toc-depth": { type: "string", default: "2" },
       "no-toc": { type: "boolean" },
@@ -112,6 +118,7 @@ try {
 
   const doc = buildDocument(tree, theme, {
     title: v.title, subtitle: v.subtitle, version: v.version, author: v.author,
+    logo: v.logo, coverImage: v["cover-image"],
     toc: !v["no-toc"], tocDepth: parseInt(v["toc-depth"]) || 2,
     demoteHeadings: !v["no-demote"], keepLinks: v["keep-links"], hrPageBreak: !v["no-hr-break"], lang: v.lang, locale: v.lang === "fr" ? "fr-FR" : v.lang,
   });
@@ -120,6 +127,7 @@ try {
   const out = v.out || `${doc.vars.title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document"}.pdf`;
   const res = await renderPdf(doc, theme, {
     out, format: v.format, cover: !v["no-cover"], pageNumbers: !v["no-page-numbers"], keepHtml: v["keep-html"], log,
+    maxPages: parseInt(v["max-pages"]) || 0,
     compress: v["no-compress"] ? null : { maxWidth: parseInt(v["image-width"]) || 0, quality: parseFloat(v["image-quality"]) || 0.85 },
   });
   log(`OK → ${res.out}  (${res.pages} pages, thème ${theme.name}, ${((Date.now() - t0) / 1000).toFixed(1)} s)`);

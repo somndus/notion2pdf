@@ -36,6 +36,9 @@ node cli.js ./dossier-deja-dezippe/ --keep-html ./build
 | `--list-themes` | liste les thèmes |
 | `--root` | force la page racine (nom de fichier ou id) si la détection auto se trompe |
 | `--title`, `--subtitle`, `--version`, `--author` | textes de la couverture / métadonnées |
+| `--logo image` | logo posé sur la couverture (si le thème le prévoit, ex. `comics`) |
+| `--cover-image image` | visuel de couverture à la place de la cover Notion de la page racine |
+| `--max-pages n` | aperçu : n'imprime que les n premières pages (couverture comprise), pour régler un thème vite |
 | `--format A4\|Letter` | format de page |
 | `--toc-depth n` | 1 = pages, 2 = + titres H1 Notion (défaut), 3 = + H2 |
 | `--no-toc`, `--no-cover` | sans sommaire / sans couverture |
@@ -61,9 +64,13 @@ node cli.js ./dossier-deja-dezippe/ --keep-html ./build
 
 - `studio` : blanc, encre, cobalt. Neutre, pour partager.
 - `dojo` : papier de riz, vermillon, or. Titres condensés en capitales.
-- `comics` : la DA du site Absolute Sumo (nuit cosmos, Bangers + Fredoka, titres sticker,
-  cadres à ombre dure, accent qui tourne à chaque section). Polices embarquées dans `fonts/`
-  (licence OFL, fichiers `LICENSE-*.txt`).
+- `comics` : la DA du jeu Absolute Sumo (menus du jeu + site / presskit). Pages papier crème,
+  bandeau noir à bords nets accroché au coin haut gauche (façon MODE SELECT). La 1re page de chaque
+  chapitre a un haut de page "écran de menu" dans la couleur du chapitre (Shop magenta, Challenges
+  orange, Online turquoise… : rayons, trame, coupe en biais). Titres Lilita One,
+  Bangers en accent, texte Fredoka ; étiquettes en parallélogramme, cartes à bandeau dégradé, tags noirs
+  au-dessus des captures, fiches persos / arènes en grille d'une seule couleur. Couverture façon presskit
+  (`--cover-image`, `--logo`). Polices embarquées dans `fonts/` (licence OFL, fichiers `LICENSE-*.txt`).
 
 ## Créer un thème
 
@@ -74,6 +81,7 @@ themes/mon-theme/
 ├─ theme.css      obligatoire — variables + touches perso
 ├─ theme.json     marges, pied de page, fond de page, titre du sommaire
 ├─ cover.html     optionnel — remplace themes/_cover.html
+├─ page.html      optionnel — décor de page pleine (fond, cadre, bandeau de titre), glissé sous chaque page
 └─ fonts/         optionnel — Nom-Bold.woff2, Nom-Regular.woff2… déclarés automatiquement
 ```
 
@@ -123,7 +131,43 @@ dans `fonts/` et utilise `font-family: "MaPolice"`. Le poids est déduit du suff
 (Light, Regular, Medium, SemiBold, Bold, Black ou un nombre).
 
 Variables de `cover.html` : `{{title}} {{subtitle}} {{description}} {{version}} {{author}}
-{{date}} {{year}} {{coverImage}}` et `{{#if version}}…{{/if}}`.
+{{date}} {{year}} {{coverImage}} {{logo}}` et `{{#if version}}…{{/if}}` (imbricables).
+
+### Décor de page (`page.html`)
+
+Chromium n'imprime rien dans les marges et ne sait pas répéter un fond par page. Un thème peut donc
+fournir `page.html` : chaque variante est imprimée en page pleine (marges à zéro) puis placée **sous**
+les pages du corps à l'assemblage (un XObject par variante, réutilisé). Le contenu, lui, reste dans la
+boîte définie par les marges de `theme.json` : dessine ton cadre autour.
+
+- Deux variantes par section : `{{opener}}` (1re page de la section) et `{{running}}` (pages suivantes),
+  plus le sommaire. Variables : `{{title}}` (titre de la section), `{{num}}` (01, 02…), `{{palette}}`,
+  `{{docTitle}}`, `{{version}}`, `{{author}}`, `{{date}}`. Chaque variante est dans
+  `<div class="layer layer-opener|layer-running" data-palette="…">`.
+- `"layerBackgrounds": true` : le fond est rendu une seule fois par palette et par sorte de page
+  (`{{background}}` vrai, avec `{{opener}}` / `{{running}}`), les variantes de section ne portent que ce
+  qui leur est propre (`{{band}}` vrai). PDF bien plus léger.
+- Le titre étant dessiné par le décor, le thème masque `.page-title` et garde sa place (`.page-header`).
+- Évite `mask-image`, `filter` et `conic-gradient` dans le décor : Chromium les rastérise (une image
+  par variante). Dégradés linéaires / radiaux et SVG restent vectoriels.
+
+### Autres réglages de `theme.json`
+
+| Clé | Effet |
+| --- | --- |
+| `palettes` | liste de palettes données en boucle aux sections (`data-palette` sur `section.page`, les entrées du sommaire et les variantes de décor) |
+| `paletteRules` | `[["regex du titre", "palette"], …]` : palette choisie d'après le titre de la section (avant la boucle) |
+| `tocPalette` | palette du sommaire |
+| `fitText` | sélecteur CSS : ces éléments (en `white-space: nowrap`) sont réduits jusqu'à tenir dans leur largeur (plancher : variable CSS `--fit-min`) |
+| `calloutGrid` | n : les callouts titrés avec image qui se suivent (fiches persos, arènes) passent en grille de n colonnes |
+| `mermaidConfig` | options passées à `mermaid.initialize` (ex. `themeVariables`), avec `"mermaidTheme": "base"` |
+
+Dans `headerTemplate` / `footerTemplate`, `{{font:Famille}}` insère la police du thème en data URI
+(`<style>{{font:LilitaOne}}</style>`) : ces gabarits ne chargent aucune ressource externe.
+
+Le convertisseur prépare aussi le HTML pour les thèmes : texte des titres h2-h4 dans un
+`<span class="h-text">`, premier paragraphe tout en gras d'un callout marqué `.callout-title` (callout
+`.has-title`), listes Notion consécutives regroupées en une seule liste.
 
 ## Blocs Notion pris en charge
 
@@ -136,5 +180,6 @@ Non pris en charge : vidéos et embeds (ignorés), bases de données en vue gale
 (exportées par Notion comme tableau, donc affichées comme tel).
 
 ### Last CMD
-node cli.js ..\export.zip -t comics -o ..\GDD.pdf --version v0.3 --author "SCHARTIER Isaac"           
+node cli.js ..\as_export.zip -t comics -o ..\02_AbsoluteSumo_GDD.pdf --version v0.3 --author "SCHARTIER Isaac" --lang en --cover-image ..\brand\boxart.webp --logo ..\brand\logo-1400.webp
+node cli.js ..\as_export.zip -t comics -o ..\preview.pdf --cover-image ..\brand\boxart.webp --logo ..\brand\logo-1400.webp --max-pages 10
 node cli.js ..\du_rpg_export.zip -t comics -o ..\GDD_DU.pdf --version v0.3 --author "SCHARTIER Isaac"
